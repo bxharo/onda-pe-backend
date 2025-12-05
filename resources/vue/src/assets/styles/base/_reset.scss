@@ -1,0 +1,75 @@
+@use 'variables';
+
+/* Primevue Reset Rules */
+body {
+  margin: 0;
+}
+
+figure {
+  margin: 0;
+}
+
+label {
+  margin-bottom: 0;
+}
+
+button,
+a,
+.button {
+  outline: none !important;
+}
+
+select {
+  background-image: none !important;
+}
+
+.ul-reset {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* WordPress Reset Rules */
+.wp-block-embed {
+  &.aligncenter {
+    display: flex;
+    justify-content: center;
+  }
+
+  &.alignright {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &.alignwide {
+    .wp-block-embed {
+      &__wrapper {
+        height: 0;
+        overflow: hidden;
+        padding-bottom: 56.25%;
+        padding-top: 30px;
+        position: relative;
+
+        iframe {
+          left: 0;
+          top: 0;
+          height: 100%;
+          width: 100%;
+          position: absolute;
+        }
+      }
+    }
+  }
+}
+
+.wp-block-gallery {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.wp-block-image {
+  img {
+    width: 100%;
+    height: auto;
+  }
+}

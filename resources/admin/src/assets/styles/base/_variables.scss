@@ -1,0 +1,60 @@
+@import 'https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800;900&display=swap';
+
+/*
+* -----------------------------------------------------------/
+* 1. Colors
+* -----------------------------------------------------------/
+*/
+
+/* Primary colors */
+$primary-color: #0064ec; /* 400 */
+$primary-color-500: #0449c9;
+
+/* Secondary colors */
+$secondary-color-200: #ac8cd6;
+$secondary-color: #6600ec; /* 400 */
+
+/* Gray colors */
+$gray-color: #e5e5e5; /* 200 */
+$gray-color-300: #d6d6d6;
+$gray-color-400: #bdbdbd;
+$gray-color-500: #a6a6a6;
+
+/* Util colors */
+$white-color: #fff;
+$black-color: #202120;
+$black-color-100: #1b1c1c;
+$util-success-color: #0f6;
+$util-warning-color: #ffb800;
+$util-alert-color: #ff4a4a;
+$util-info-color: #00b2ff;
+
+/*
+* -----------------------------------------------------------/
+* 2. Fonts
+* -----------------------------------------------------------/
+*/
+
+/* 2.1 Font Sizes */
+$fs-12: 12px;
+$fs-14: 14px;
+$fs-16: 16px;
+$fs-18: 18px;
+$fs-21: 21px;
+$fs-25: 25px;
+$fs-30: 30px;
+$fs-35: 35px;
+$fs-40: 40px;
+
+/* 2.2 Font Weights */
+$font-light: 300;
+$font-regular: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+$font-extrabold: 800;
+$font-black: 900;
+
+/* 2.3 Font Families */
+$body-font-family: 'Work Sans', sans-serif;
+$secondary-font-family: 'Work Sans', sans-serif;

@@ -1,0 +1,117 @@
+@use 'variables';
+
+/* Maps - Variables */
+$primary-colors: (
+  'main': variables.$primary-color,
+  '500': variables.$primary-color-500
+);
+$secondary-colors: (
+  '200': variables.$secondary-color-200,
+  'main': variables.$secondary-color
+);
+$gray-colors: (
+  'main': variables.$gray-color,
+  '300': variables.$gray-color-300,
+  '400': variables.$gray-color-400,
+  '500': variables.$gray-color-500
+);
+$util-colors: (
+  'white': variables.$white-color,
+  'black': variables.$black-color,
+  'black-100': variables.$black-color-100,
+  'success': variables.$util-success-color,
+  'warning': variables.$util-warning-color,
+  'alert': variables.$util-alert-color,
+  'info': variables.$util-info-color
+);
+$font-sizes: (
+  '14': variables.$fs-14,
+  '16': variables.$fs-16,
+  '18': variables.$fs-18,
+  '21': variables.$fs-21,
+  '25': variables.$fs-25,
+  '30': variables.$fs-30,
+  '35': variables.$fs-35,
+  '40': variables.$fs-40
+);
+$font-weights: (
+  'regular': variables.$font-regular,
+  'medium': variables.$font-medium,
+  'sbold': variables.$font-semibold,
+  'bold': variables.$font-bold,
+  'black': variables.$font-black
+);
+$font-families: (
+  '1': variables.$body-font-family,
+  '2': variables.$secondary-font-family
+);
+
+/*
+* -----------------------------------------------------------/
+* 1. Text and Background colors
+* -----------------------------------------------------------/
+*/
+
+@each $key, $pcolor in $primary-colors {
+  .color-primary-#{$key} {
+    color: $pcolor;
+  }
+
+  .background-primary-#{$key} {
+    background-color: $pcolor;
+  }
+}
+
+@each $key, $scolor in $secondary-colors {
+  .color-secondary-#{$key} {
+    color: $scolor;
+  }
+
+  .background-secondary-#{$key} {
+    background-color: $scolor;
+  }
+}
+
+@each $key, $gcolor in $gray-colors {
+  .color-gray-#{$key} {
+    color: $gcolor;
+  }
+
+  .background-gray-#{$key} {
+    background-color: $gcolor;
+  }
+}
+
+@each $key, $ucolor in $util-colors {
+  .color-#{$key} {
+    color: $ucolor;
+  }
+
+  .background-#{$key} {
+    background-color: $ucolor;
+  }
+}
+
+/*
+* -----------------------------------------------------------/
+* 2. Font size, weights and families
+* -----------------------------------------------------------/
+*/
+
+@each $key, $fsize in $font-sizes {
+  .fs-#{$key} {
+    font-size: $fsize;
+  }
+}
+
+@each $key, $fweight in $font-weights {
+  .w-#{$key} {
+    font-weight: $fweight;
+  }
+}
+
+@each $key, $ffam in $font-families {
+  .font-family-#{$key} {
+    font-family: $ffam;
+  }
+}

@@ -1,0 +1,28 @@
+@use '../base/variables';
+@use '../base/mixins';
+
+.c-button {
+  font-size: variables.$fs-16;
+  padding: 0.6rem 1.5rem;
+  display: inline-block;
+  outline: none;
+  text-decoration: none;
+  font-weight: variables.$font-semibold;
+  text-align: center;
+  cursor: pointer;
+
+  @include mixins.b-radious(5px);
+  @include mixins.transition(0.2s);
+
+  &--primary {
+    background-color: variables.$primary-color;
+    color: variables.$white-color;
+    border: none;
+
+    &:hover:not(.loading),
+    &:focus:not(.loading) {
+      background-color: variables.$primary-color-500;
+      color: variables.$white-color !important;
+    }
+  }
+}

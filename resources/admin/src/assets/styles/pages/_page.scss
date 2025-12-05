@@ -1,0 +1,22 @@
+@use '../base/variables';
+@use '../base/core';
+
+.c-section {
+  outline: none;
+
+  &__title {
+    font-size: variables.$fs-30;
+    color: variables.$white-color;
+    font-weight: variables.$font-bold;
+  }
+
+  .c-card-image {
+    height: 200px;
+  }
+}
+
+@include core.media-breakpoint-up(lg) {
+  .c-section {
+    outline: none;
+  }
+}

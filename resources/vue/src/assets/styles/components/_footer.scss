@@ -1,0 +1,24 @@
+@use '../base/variables';
+@use '../base/core';
+
+.c-footer {
+  color: variables.$white-color;
+  background: variables.$black-color-100;
+  padding: 1.5rem 0;
+
+  &__container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  &__logo {
+    display: inline-block;
+    width: 120px;
+    padding-left: 1rem;
+
+    img {
+      width: 100%;
+    }
+  }
+}
+

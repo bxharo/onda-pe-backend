@@ -1,0 +1,65 @@
+@use 'variables';
+@use 'mixins';
+
+::selection {
+  color: variables.$white-color;
+  background: variables.$primary-color;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  overflow-x: hidden;
+  color: variables.$black-color !important;
+  background-color: variables.$white-color;
+
+  p {
+    line-height: 26px;
+  }
+}
+
+a {
+  color: variables.$primary-color;
+}
+
+h1,
+h2,
+h3 {
+  color: variables.$black-color;
+  font-family: variables.$secondary-font-family !important;
+  margin: 0;
+}
+
+* {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: variables.$gray-color-400;
+    border-radius: 10px;
+
+    &:hover {
+      background: variables.$black-color;
+    }
+
+    &:active {
+      background: variables.$primary-color;
+    }
+  }
+}
+
+[data-pc-name], /* PrimeVue rule */
+.c-app {
+  * {
+    font-family: variables.$body-font-family !important;
+  }
+}
