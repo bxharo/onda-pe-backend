@@ -1,108 +1,77 @@
+/* ==========================================================================
+   BASE: Estructura y comportamiento global de Onda.
+   ========================================================================== */
 @use 'variables';
-@use 'mixins';
 
+// 1. COMPORTAMIENTO DEL NAVEGADOR
 ::selection {
-  color: #fff;
-  background: variables.$primary-color;
-}
-
-body {
-  width: 100%;
-  overflow-x: hidden;
-  color: variables.$gray-color-500 !important;
-  background-color: variables.$black-color;
-
-  p {
-    line-height: 26px;
-  }
+  color: variables.$white;
+  background: variables.$accent-blue;
 }
 
 html {
+  font-size: 62.5%; // 1rem = 10px (Crucial para consistencia de escala)
   scroll-behavior: smooth;
 }
 
-a {
-  color: variables.$primary-color;
-}
-
-h1,
-h2,
-h3 {
-  color: variables.$white-color;
-  font-family: variables.$secondary-font-family !important;
-  margin: 0;
-}
-
 * {
-  &::-webkit-scrollbar {
-    width: 10px;
+  box-sizing: border-box;
+  
+  // Personalización de Scrollbar (Look Editorial)
+  &::-webkit-scrollbar { 
+    width: 0.6rem; 
   }
 
-  &::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 0;
+  &::-webkit-scrollbar-track { 
+    background: variables.$white; 
   }
-
+  
   &::-webkit-scrollbar-thumb {
-    background: variables.$gray-color-400;
-    border-radius: 10px;
+    background: variables.$gray-light;
+    border-radius: 0;
 
-    &:hover {
-      background: variables.$black-color;
-    }
-
-    &:active {
-      background: variables.$primary-color;
+    &:hover { 
+      background: variables.$accent-blue; 
     }
   }
 }
 
-.c-loader-app {
-  @include mixins.flex-center;
-
-  background-color: variables.$white-color;
+// 2. CUERPO (Body)
+body {
+  margin: 0;
   width: 100%;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  opacity: 1;
+  overflow-x: hidden;
+  font-family: variables.$font-sans;
+  font-size: 1.6rem; // Equivale a 16px por defecto
+  line-height: 1.6;
+  color: variables.$text-main;
+  background-color: variables.$white; // Usamos variable directa
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
 
-  &__animation {
-    font-size: 80px;
-    color: variables.$primary-color;
-  }
-
-  &.hidden {
-    visibility: hidden;
-    opacity: 0;
+  // Párrafos generales
+  p {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    line-height: 1.6;
+    color: variables.$text-muted;
   }
 }
 
+// 3. ESTRUCTURA VUE (Layout dinámico)
 .c-app {
-  height: 100vh;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 
   &__section {
-    transform: scale(0.96);
-
-    @include mixins.transition;
-
-    &.loaded {
-      transform: scale(1);
+    flex: 1;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    
+    &.loaded { 
+      opacity: 1; 
     }
-  }
-
-  &:has(.loaded) {
-    overflow: auto;
-    height: auto;
-  }
-}
-
-[data-pc-name], /* PrimeVue rule */
-.c-app {
-  * {
-    font-family: variables.$body-font-family !important;
   }
 }

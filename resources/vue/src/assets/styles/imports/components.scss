@@ -1,6 +1,13 @@
+@use '../components/tags';
+@use '../components/featured';
 @use '../components/button';
 @use '../components/footer';
+@use '../components/loader';
 @use '../components/form';
 @use '../components/header';
+@use '../components/hero';
 @use '../components/link';
-@use '../components/sidebar';
+@use '../components/article-preview';
+@use '../components/sidebar-nav';
+@use '../components/widgets';
+

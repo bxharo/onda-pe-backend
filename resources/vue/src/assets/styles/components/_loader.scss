@@ -1,0 +1,47 @@
+/* ==========================================================================
+   COMPONENT: Loader (Pantalla de carga inicial)
+   Description: Bloquea el viewport hasta que la App de Vue está lista.
+   ========================================================================== */
+
+@use '../base/variables';
+@use '../base/mixins';
+
+.c-loader-app {
+  @include mixins.flex-center;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 100vh;
+  background-color: variables.$white;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  will-change: opacity;
+
+  // El logo o texto animado
+  &__animation {
+    font-family: variables.$font-sans;
+    font-size: variables.$fs-80;
+    font-weight: variables.$font-black;
+    letter-spacing: -2px;
+    color: variables.$accent-blue;
+    
+    // Opcional: un sutil pulso editorial
+    animation: loader-pulse 1.5s ease-in-out infinite;
+  }
+
+  // Estado: Ocultar (Activado por Vue/JS)
+  &.is-hidden {
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+// Pequeña animación para que no sea estático
+@keyframes loader-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}

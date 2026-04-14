@@ -1,38 +1,31 @@
-.br {
-  &-small {
-    border-radius: 5px;
-  }
+/* ==========================================================================
+   HELPERS: Clases de utilidad manual y efectos
+   ========================================================================== */
 
-  &-medium {
-    border-radius: 10px;
-  }
-}
+// 1. OBJETOS Y BORDES
+.u-of-cover { object-fit: cover; }
+.u-of-contain { object-fit: contain; }
 
-.of {
-  &-cover {
-    object-fit: cover;
-  }
+.u-br-none { border-radius: 0 !important; }
 
-  &-contain {
-    object-fit: contain;
-  }
-}
-
-.fade {
+// 2. TRANSICIONES DE VUE (Fade estándar)
+.v-fade {
   &-enter-active,
   &-leave-active {
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease;
   }
 
-  &-enter,
+  &-enter-from, // Actualizado a sintaxis Vue 3
   &-leave-to {
     opacity: 0;
   }
 }
 
+// 3. EFECTO REVELACIÓN DE IMÁGENES (Lazy Load)
 .v-lazy-image {
-  filter: blur(20px) grayscale(100%);
-  transition: filter 0.7s;
+  filter: blur(10px) grayscale(100%);
+  transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: filter;
 
   &-loaded {
     filter: blur(0) grayscale(0);

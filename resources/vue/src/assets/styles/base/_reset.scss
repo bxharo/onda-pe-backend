@@ -1,8 +1,9 @@
 @use 'variables';
 
-/* Primevue Reset Rules */
+/* 1. Primevue & General Reset Rules */
 body {
   margin: 0;
+  -webkit-tap-highlight-color: transparent; // Limpieza para móviles
 }
 
 figure {
@@ -11,16 +12,22 @@ figure {
 
 label {
   margin-bottom: 0;
+  display: inline-block;
 }
 
 button,
 a,
 .button {
   outline: none !important;
+  text-decoration: none;
+  color: inherit;
 }
 
-select {
+// Limpieza de inputs de formulario para que sigan el estilo minimalista
+select, input, textarea {
   background-image: none !important;
+  border-radius: 0 !important; // Mantiene los ángulos rectos de Onda.
+  font-family: variables.$font-sans;
 }
 
 .ul-reset {
@@ -29,8 +36,12 @@ select {
   padding: 0;
 }
 
-/* WordPress Reset Rules */
+/* 2. WordPress Content Reset (Crucial para el diseño editorial) */
+
+// Contenedores de Video (YouTube/Vimeo)
 .wp-block-embed {
+  margin: 2rem 0;
+
   &.aligncenter {
     display: flex;
     justify-content: center;
@@ -41,35 +52,57 @@ select {
     justify-content: flex-end;
   }
 
-  &.alignwide {
-    .wp-block-embed {
-      &__wrapper {
-        height: 0;
-        overflow: hidden;
-        padding-bottom: 56.25%;
-        padding-top: 30px;
-        position: relative;
+  // Hacer que los embeds sean responsivos manteniendo el aspect-ratio
+  &__wrapper {
+    position: relative;
+    padding-bottom: 56.25%; // Proporción 16:9
+    height: 0;
+    overflow: hidden;
+    width: 100%;
 
-        iframe {
-          left: 0;
-          top: 0;
-          height: 100%;
-          width: 100%;
-          position: absolute;
-        }
-      }
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
     }
   }
 }
 
+// Galerías de imágenes de WordPress
 .wp-block-gallery {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: variables.$gap;
+  margin: 2rem 0;
 }
 
+// Imágenes individuales
 .wp-block-image {
+  margin: 1.5rem 0;
+
   img {
     width: 100%;
     height: auto;
+    display: block;
+    border-radius: 0; // Aseguramos ángulos rectos en fotos de artículos
   }
+
+  figcaption {
+    font-family: variables.$font-sans;
+    font-size: variables.$fs-12;
+    color: variables.$text-muted;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+}
+
+// Separadores (HR) de WordPress
+.wp-block-separator {
+  border: none;
+  border-top: 1px solid variables.$gray-light;
+  margin: 3rem auto;
+  width: 100px;
 }

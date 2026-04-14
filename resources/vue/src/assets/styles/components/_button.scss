@@ -1,28 +1,75 @@
+/* ==========================================================================
+   COMPONENT: Button
+   Description: Botones de acción del ecosistema Onda.
+   Estética: Tipografía editorial, sin bordes redondeados, interacción rápida.
+   ========================================================================== */
+
 @use '../base/variables';
 @use '../base/mixins';
 
+// 1. BASE INVISIBLE (Skeleton)
+%button-base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    font-family: variables.$font-main;
+    font-size: 11px;
+    font-weight: variables.$font-black;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid variables.$black;
+    background: transparent;
+    color: variables.$black;
+
+    @include mixins.b-radious(0); 
+    @include mixins.transition(0.2s);
+}
+
+// 2. COMPONENTE PRINCIPAL
 .c-button {
-  font-size: variables.$fs-16;
-  padding: 0.6rem 1.5rem;
-  display: inline-block;
-  outline: none;
-  text-decoration: none;
-  font-weight: variables.$font-semibold;
-  text-align: center;
-  cursor: pointer;
+    @extend %button-base;
 
-  @include mixins.b-radious(5px);
-  @include mixins.transition(0.2s);
-
-  &--primary {
-    background-color: variables.$primary-color;
-    color: variables.$white-color;
-    border: none;
-
-    &:hover:not(.loading),
-    &:focus:not(.loading) {
-      background-color: variables.$primary-color-500;
-      color: variables.$white-color !important;
+    &:hover {
+        background-color: variables.$black;
+        color: variables.$white;
     }
-  }
+
+    // --- VARIANTES (MODIFICADORES) ---
+
+    // .is-accent: Botón llamativo (Celeste)
+    &.is-accent {
+        background-color: variables.$accent-blue;
+        border-color: variables.$accent-blue;
+        color: variables.$white;
+
+        &:hover {
+            background-color: variables.$black;
+            border-color: variables.$black;
+        }
+    }
+
+    // .is-muted: Botón discreto (Gris)
+    &.is-muted {
+        border-color: variables.$gray-light;
+        color: variables.$text-muted;
+
+        &:hover {
+            background-color: variables.$gray-light;
+            color: variables.$black;
+        }
+    }
+
+    // .is-nav: Versión compacta para menús
+    &.is-nav {
+        padding: 6px 12px;
+        font-size: 10px;
+    }
+
+    // .is-full: Botón que ocupa todo el ancho (útil en sidebars/móviles)
+    &.is-full {
+        width: 100%;
+    }
 }

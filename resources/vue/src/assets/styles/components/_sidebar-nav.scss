@@ -1,0 +1,98 @@
+/* ==========================================================================
+   COMPONENT: Sidebar
+   Description: Menú lateral de navegación y contenido editorial.
+   ========================================================================== */
+
+@use '../base/variables';
+@use '../base/mixins';
+
+.c-sidebar {
+  display: flex;
+  flex-direction: column;
+
+  .c-sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 30px;
+  }
+
+  // 1. LOGO (Versión reducida del Header)
+  .c-sidebar-logo {
+    display: block;
+    margin-bottom: 40px;
+    font-family: variables.$font-sans;
+    font-size: 40px;
+    font-weight: variables.$font-black;
+    letter-spacing: -2px;
+    color: variables.$black;
+    text-decoration: none;
+
+    span {
+      color: variables.$accent-blue;
+    }
+  }
+
+  // 2. NAVEGACIÓN PRINCIPAL
+  .c-sidebar-nav {
+    ul {
+      @include mixins.ul-reset;
+    }
+
+    li {
+      margin-bottom: 20px;
+    }
+
+    a {
+      font-size: 24px;
+      font-weight: variables.$font-black;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: variables.$black;
+      
+      @include mixins.transition(0.2s);
+
+      &:hover {
+        color: variables.$accent-blue;
+      }
+    }
+  }
+
+  // 3. SECCIÓN EDITORIAL (Contenido dinámico)
+  .c-sidebar-editorial {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  // 4. FOOTER DEL SIDEBAR
+  .c-sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid variables.$black;
+    font-size: 10px;
+    font-weight: variables.$font-bold;
+    color: variables.$text-muted;
+    text-transform: uppercase;
+  }
+}
+
+// --- RESPONSIVE ADAPTATION ---
+@include mixins.media-breakpoint-down(md) {
+  .c-sidebar {
+    .c-sidebar-editorial {
+      align-items: stretch;
+
+      & > * {
+        width: 100%;
+      }
+
+      // Widget específico: "Tal día como hoy"
+      & > *:last-child {
+        height: auto;
+        max-width: 500px;
+        align-self: center;
+      }
+    }
+  }
+}

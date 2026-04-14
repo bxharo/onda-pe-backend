@@ -1,121 +1,161 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import HomeHero from '@/components/ui/HomeHero.vue'
+import SidebarMain from '@/components/ui/SidebarMain.vue'
+import HomeCategorySection from '@/components/ui/HomeCategorySection.vue';
+import BaseView from '@/views/core/BaseView.vue';
 import { useAppStore } from '@/stores/app'
-import { useRoute } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
 
-const VEE_VALIDATE_LINK =
-  'https://vee-validate.logaretm.com/v4/guide/composition-api/typed-schema#yup'
-const ICONIFY_LINK = 'https://icon-sets.iconify.design/'
-const PRIMEVUE_LINK = 'https://primevue.org/'
-const PRIMEFLEX_LINK = 'https://primeflex.org/'
-const PANDAWP_LINK = 'https://primeflex.org/'
-const route = useRoute()
 const store = useAppStore()
-const toast = useToast()
-const dialogVisible = ref<boolean>(false)
 
-onMounted(() => {
-  store.updateLoader({
-    status: false,
-    route: route.path
-  })
+//Recibimos el 'content' que viene desde App.vue
+defineProps<{
+  content: any
+}>()
+
+onMounted(async () => {
+  // 1. Pedimos la data del Hero (Soberanía Digital)
+  // Activará el caso 'home' en  __getPostData del Controller
+  await store.getPageData('home', 'page', 'page')
+  
+  // 2. Ahora que la Home tiene sus datos, quitamos el loader
+  store.updateLoader({ status: false, route: '/' })
+  console.log("Revisando el post:", store.pageData?.post)
 })
 
-const show = () => {
-  toast.add({ severity: 'info', summary: 'Info', detail: 'Message Content', life: 3000 })
-}
+const heroData = computed(() => {
+
+  // Accedemos a los datos inyectados en el Controller(HERO)
+  const post = store.pageData?.data?.hero;
+  
+  if (!post) {
+    return { 
+      tag: '', 
+      title: '', 
+      description: '', 
+      image: '' 
+    };
+  }
+  
+  return {
+    tag: (post.category_name || 'ACTUALIDAD').toUpperCase(),
+    title: post.title_home || 'Cargando...',
+    description: post.post_excerpt || '',
+    image: post.hero_image || ''
+  }
+ 
+})
+
+const featuredPosts = computed(() => {
+  // Accedemos a los datos inyectados en el Controller (DESTACADAS)
+  const posts = store.pageData?.data?.destacadas || [];
+
+  // Mapeamos para que coincida con la estructura de tu componente
+  return posts.map((post: any, index: number) => ({
+    id: post.ID,
+    category: `0${index + 1} / ${(post.category_name || 'DESTACADO').toUpperCase()}`,
+    title: post.title_home,
+    description: post.post_excerpt,
+    url: post.link // Timber provee el link directo
+  })).slice(0, 3); // Solo tomamos las primeras 3 para la Triple Section
+
+})
+
+const gridTriplePosts = ref([
+  { id: 1, title: 'Jazz en el centro.', excerpt: 'La movida nocturna...', image: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?q=80' },
+  { id: 2, title: 'Noches de Barranco.', excerpt: 'Un recorrido por...', image: 'https://images.unsplash.com/photo-1514328537553-6058093e9866?q=80' },
+  { id: 3, title: 'Campus Híbridos.', excerpt: 'Las universidades...', image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80' }
+])
+
+const gridDoublePosts = ref([
+  { id: 1, title: 'El renacer del Centro.', excerpt: 'Desde casonas...', image: 'https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80' },
+  { id: 2, title: 'Relojería andina.', excerpt: 'Una nueva generación...', image: 'https://images.unsplash.com/photo-1509048191080-d2984bad6ad5?q=80' }
+])
+
+const economyPosts = [
+  { id: 1, meta: 'Banca', title: 'BCR mantiene tasas bajas.', description: 'El Banco Central de Reserva ha decidido mantener su política de tasas mínimas para estimular el consumo interno y facilitar el acceso a créditos hipotecarios en el sector inmobiliario nacional este trimestre.', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80' },
+  { id: 2, meta: 'Agro', title: 'Récord de Arándanos en el norte.', description: 'Gracias a la optimización de los sistemas de riego y nuevos acuerdos comerciales, las exportaciones de arándanos hacia los mercados asiáticos han registrado un crecimiento histórico del 40% durante el primer semestre.' },
+  { id: 3, meta: 'Inversión', title: 'Fintech levanta $20M en ronda A.', description: 'Una destacada plataforma de banca abierta local ha cerrado una importante ronda de capitalización liderada por inversores europeos, consolidando el atractivo del ecosistema tecnológico financiero peruano ante el mundo.' },
+  { id: 4, meta: 'Puerto', title: 'Chanchay: Fase 2 inicia obras.', description: 'Una destacada plataforma de banca abierta local ha cerrado una importante ronda de capitalización liderada por inversores europeos, consolidando el atractivo del ecosistema tecnológico financiero peruano ante el mundo.' },
+ 
+  // ... más posts
+];
+
+const techPosts = [
+  { id: 1, meta: 'IA', title: 'BCR mantiene tasas bajas.', description: 'El Banco Central de Reserva ha decidido mantener su política de tasas mínimas para estimular el consumo interno y facilitar el acceso a créditos hipotecarios en el sector inmobiliario nacional este trimestre.', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80' },
+  { id: 2, meta: 'Hardware', title: 'Récord de Arándanos en el norte.', description: 'Gracias a la optimización de los sistemas...' },
+  { id: 3, meta: 'Ciber', title: 'Fintech levanta $20M en ronda A.', description: 'Una destacada plataforma de banca abierta local ha cerrado una importante ronda de capitalización liderada por inversores europeos, consolidando el atractivo del ecosistema tecnológico financiero peruano ante el mundo.' },
+  { id: 4, meta: 'Espacio', title: 'Fintech levanta $20M en ronda A.', description: 'Una destacada plataforma de banca abierta local ha cerrado una importante ronda de capitalización liderada por inversores europeos, consolidando el atractivo del ecosistema tecnológico financiero peruano ante el mundo.' },
+ 
+  // ... más posts
+];
+
 </script>
 
 <template>
-  <section class="c-section c-section--home">
-    <div class="container">
-      <div class="grid justify-content-center">
-        <div class="col-12 md:col-7">
-          <div class="c-welcome py-5 flex flex-column gap-4">
-            <div class="py-4 text-center flex flex-column align-items-center justify-content-center">
-              <h1 class="fs-30">
-                Welcome to <span class="color-success">Panda WP</span>
-                <IconUI icon="noto-v1:panda" />
-              </h1>
-              <p>
-                Build web applications with WordPress + Vue — super easy, organized, scalable, and without losing SEO.
-              </p>
-              <a class="c-link c-link--primary flex align-items-center" :href="PANDAWP_LINK" target="_blank">
-                <IconUI class="mr-2" icon="icon-park-twotone:doc-search-two" /> Read the documentation
-              </a>
-            </div>
+ <BaseView :content="content">
+      <div class="p-home c-main-layout"> 
+        
+        <div class="c-content-area">
+          <HomeHero 
+            v-bind="heroData"
+            class="is-hero"
+          />
 
-            <h2 class="color-gray-300 w-bold text-center">Useful elements</h2>
-            <div class="background-black-100 p-4 br-medium">
-              <h3 class="color-gray-300 w-bold mb-4">✅ Formularies</h3>
-              <p>
-                Implemented thanks to
-                <a class="c-link c-link--primary" :href="VEE_VALIDATE_LINK" target="_blank">
-                  vee-validate + yup
-                </a>
-              </p>
-              <FormMain />
+          <section class="c-triple-section">
+            <div v-for="post in featuredPosts" :key="post.id" class="c-article-preview is-triple">
+              <span class="c-article-preview-tag">{{ post.category }}</span>
+              <h3 class="c-article-preview-title">{{ post.title }}</h3>
+              <p class="c-article-preview-excerpt">{{ post.description }}</p>
             </div>
-            <div class="background-black-100 p-4 br-medium">
-              <h3 class="color-gray-300 w-bold mb-4">🐼 Icons</h3>
-              <p>
-                Icons provided by
-                <a class="c-link c-link--primary" :href="ICONIFY_LINK" target="_blank"> Iconify </a>
-              </p>
-              <div class="flex gap-3 fs-25">
-                <IconUI icon="lucide:baby" />
-                <IconUI icon="lucide:banana" />
-                <IconUI icon="lucide:bell-plus" />
-                <IconUI icon="lucide:archive" />
-                <IconUI icon="lucide:arrow-big-up-dash" />
-                <IconUI icon="lucide:box" />
-              </div>
-            </div>
-            <div class="background-black-100 p-4 br-medium">
-              <h3 class="color-gray-300 w-bold mb-4">🚀 Images with lazy loading</h3>
-              <router-link class="c-link c-link--primary" to="/example">
-                Check example view
-              </router-link>
-            </div>
-            <div class="background-black-100 p-4 br-medium">
-              <h3 class="color-gray-300 w-bold mb-4">
-                <IconUI icon="simple-icons:primevue" /> Prime Ecosystem
-              </h3>
-              <h4 class="w-bold">
-                PrimeVue Componentes
-                <a class="c-link c-link--primary" :href="PRIMEVUE_LINK" target="_blank">
-                  / read here
-                </a>
-              </h4>
-              <div class="flex gap-4">
-                <button class="c-button c-button--primary" @click="show()">Toast</button>
-                <button class="c-button c-button--primary" @click="dialogVisible = true">
-                  Dialog/Modal
-                </button>
-              </div>
+          </section>
 
-              <h4 class="w-bold">
-                PrimeFlex (CSS Utilities)
-                <a class="c-link c-link--primary" :href="PRIMEFLEX_LINK" target="_blank">
-                  / read here
-                </a>
-              </h4>
-              <p>The perfect CSS utility for build websites quickly</p>
-            </div>
-          </div>
+          <section class="c-grid-row-3">
+            <article v-for="post in gridTriplePosts" :key="post.id" class="c-article-preview is-grid">
+              <div class="c-article-preview-image-wrapper">
+                <img :src="post.image" :alt="post.title">
+              </div>
+              <h4 class="c-article-preview-title">{{ post.title }}</h4>
+              <p class="c-article-preview-excerpt">{{ post.excerpt }}</p>
+            </article>
+          </section>
+
+          <section class="c-row-text-only">
+            <span class="c-article-preview-tag">Especial // Sostenibilidad</span>
+            <h2 class="c-article-preview-title">Riego Ancestral...</h2>
+            <p class="c-article-preview-excerpt">Frente a las sequías...</p>
+          </section>
+
+          <section class="c-grid-row-2">
+            <article v-for="post in gridDoublePosts" :key="post.id" class="c-article-preview is-grid">
+              <div class="c-article-preview-image-wrapper">
+                <img :src="post.image" :alt="post.title">
+              </div>
+              <h4 class="c-article-preview-title">{{ post.title }}</h4>
+              <p class="c-article-preview-excerpt">{{ post.excerpt }}</p>
+            </article>
+          </section>
         </div>
-      </div>
-    </div>
 
-    <ToastUI position="top-left" />
-    <DialogUI
-      v-model:visible="dialogVisible"
-      modal
-      header="Dialog example"
-      :style="{ width: '25rem' }"
-    >
-      Welcome to this modal!
-    </DialogUI>
-  </section>
+        <aside class="c-sidebar"> 
+          <SidebarMain />
+        </aside>
+
+      </div> 
+
+      <div class="c-category-wrapper">
+        <HomeCategorySection title="Economía" :posts="economyPosts" />
+        <HomeCategorySection title="Tecnología" :posts="techPosts" />
+      </div>
+
+  </BaseView>
 </template>
+
+<style lang="scss" scoped>
+@use '@/assets/styles/base/variables';
+@use '@/assets/styles/components/hero';
+@use '@/assets/styles/base/layout'; 
+@use '@/assets/styles/pages/home';
+
+
+</style>

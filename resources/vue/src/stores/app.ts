@@ -20,6 +20,7 @@ interface General {
 interface AppStore {
   general: General
   loader: LoaderMain
+  pageData: any
 }
 
 export const useAppStore = defineStore('app', {
@@ -36,6 +37,7 @@ export const useAppStore = defineStore('app', {
       cached: [],
       error: false
     },
+    pageData: null
   }),
   getters: {
     loaderCached(): string[] {
@@ -54,10 +56,11 @@ export const useAppStore = defineStore('app', {
       const hostname = window.location.hostname
       const protocol = window.location.protocol
 
-      return import.meta.env.VITE_APP_API ?? `${protocol}//${hostname}/wp-json/api/v1`
+      return import.meta.env.VITE_APP_API ?? `${protocol}//${hostname}/wp-json/custom/v1`
     }
   },
   actions: {
+    // ACCIÓN QUE DETERMINA CUÁNDO MOSTRAR LA PANTALLA DE CARGA Y CUANDO QUITARLA
     updateLoader(payload: Loader): void {
       this.loader.status = payload.status
 
@@ -69,6 +72,7 @@ export const useAppStore = defineStore('app', {
         this.loader.cached.push(payload.route)
       }
     },
+    // ACCIÓN PARA DATOS GLOBALES (Menús)
     async getGeneralData(): Promise<void> {
       const response = await fetch(`${this.api}/pages/general/?type=general`)
 
@@ -79,6 +83,30 @@ export const useAppStore = defineStore('app', {
         this.general.data.primaryMenu = data.primary_menu
         this.general.loading = false
       }
+    },
+    // ACCIÓN PARA TRAER PÁGINA O POST
+    async getPageData(slug: string, type: string = 'page', typeName: string = ''): Promise<void> {
+      try {
+    const url = `${this.api}/pages/${slug}?type=${type}&type-name=${typeName}`
+    console.log("🚀 Pidiendo datos a:", url) // Verifica si la URL es igual a la que funciona
+    
+    const response = await fetch(url)
+    
+    if (response.ok) {
+      const json = await response.json()
+      console.log("📦 JSON recibido desde PHP:", json)
+      
+      // IMPORTANTE: Quitamos el .data porque tu PHP devuelve el objeto directo
+      this.pageData = json 
+    } else {
+      console.error("❌ Error en respuesta:", response.status)
     }
+  } catch (error) {
+    console.error("💥 Error crítico en fetch:", error)
+    this.pageData = null
   }
+
+      }
+    }
+  
 })

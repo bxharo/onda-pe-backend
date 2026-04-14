@@ -1,0 +1,56 @@
+/* ==========================================================================
+   COMPONENT: Featured Sections
+   Description: Maneja los contenedores especiales de la Home.
+   Nota: El contenido interno usa el estándar .c-article-preview.
+   ========================================================================== */
+@use '../base/variables';
+@use '../base/mixins';
+
+.c-featured-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid variables.$black;
+    border-bottom: 1px solid variables.$black;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.c-featured-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+// --- FILA EDITORIAL (Solo Texto) ---
+  .c-row-text-only {
+    text-align: center;
+    padding: 80px 0;
+    max-width: 800px;
+    margin: 0 auto 60px;
+
+    .c-row-text-only-title {
+      font-family: variables.$font-serif;
+      font-size: clamp(32px, 5vw, 48px); // Tamaño fluido
+      margin: 20px 0;
+      line-height: 1.1;
+    }
+  }
+
+// Responsive
+// RESPONSIVE
+@include mixins.media-breakpoint-down(md) {
+    .c-featured-grid {
+        grid-template-columns: 1fr;
+        
+        .c-article-preview {
+            border-right: none;
+            border-bottom: 1px solid variables.$black;
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+}

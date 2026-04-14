@@ -6,8 +6,9 @@ use Timber\Timber;
 use Exception;
 
 class PageController {
-    public function __construct() { }
+    public function __construct() {    }
 
+    // ORQUESTADOR: DECIDE A CUÁL DE LAS SIGUIENTES FUNCIONES LLAMAR
     public function show($request) {
         switch ($request['type']) {
             case 'page':
@@ -20,10 +21,10 @@ class PageController {
                 ]);
 
                 if ($post) {
-                    $post->title;
-                    $post->content;
-
-                    if ($post->thumbnail) $post->thumbnail->src;
+                    $post->title = $post->title();
+                    $post->content = $post->content();
+                    // IMPORTANTE: Convertimos el objeto thumbnail en una URL de texto
+                    $post->featured_image = $post->thumbnail() ? $post->thumbnail()->src() : null;
 
                     $pageData = [
                         'post' => $post
@@ -59,14 +60,10 @@ class PageController {
                 $pageData = $this->__getGeneralData();
                 break;
         }
-
-        if ($pageData) {
-            return $pageData;
-        } else {
-            return false;
-        }
+        return $pageData ? $pageData : false;
     }
-
+    
+    // DETERMINA LA LÓGICA ESPECÍFICA PARA CADA TIPO DE POST (TECNOLOGÍA, MINERÍA, ACTUALIDAD, ETC)
     private function __getPostData($objectType, $objectTypeName, $postSlug, $objectId) {
         $data = [];
 
@@ -81,16 +78,59 @@ class PageController {
 
             case 'page':
                 switch ($postSlug) {
-                    case 'example':
-                        $data = ['articles' => Timber::get_posts(['post_type' => 'post'])];
-                        break;
-                }
+                case 'home': // <--- Este es el caso para tu Portada
+                    $heroPost = Timber::get_post([
+                        'post_type' => 'post',
+                        'meta_query' => [['key' => 'es_hero', 'value' => '1']],
+                        'posts_per_page' => 1
+                    ]);
+
+                    if ($heroPost) {
+                        $heroData = [
+                            'id'            => $heroPost->ID,
+                            'title_home'         => $heroPost->titulo_portada(),
+                            'post_excerpt'  => $heroPost->post_excerpt,
+                            'hero_image'    => $heroPost->thumbnail() ? $heroPost->thumbnail()->src() : null,
+                            'category_name' => (count($heroPost->terms())) ? $heroPost->terms()[0]->name : 'Actualidad'
+                        ];
+                    }
+                    // Obtenemos las destacadas
+                    $destacadasPosts = Timber::get_posts([
+                        'post_type' => 'post',
+                        'meta_query' => [['key' => 'es_destacada', 'value' => '1']],
+                        'posts_per_page' => 3
+                    ]);
+                    // Preparamos cada destacada para que no le falte imagen ni categoría
+                    $destacadasData = [];
+                    foreach ($destacadasPosts as $p) {
+                        $p_terms = $p->terms();
+                        
+                        $destacadasData[] = [
+                            'id'            => $p->ID,
+                            'title_home'         => $p->titulo_portada(),
+                            'post_excerpt'  => $p->post_excerpt,
+                            'category_name' => ($p_terms && !empty($p_terms)) ? $p_terms[0]->name : 'Destacado',
+                            'url'           => $p->link() // Si prefieres enviar la URL procesada desde PHP
+                        ];
+                    }
+
+                    $data = [
+                        'hero' => $heroData,
+                        'destacadas' => $destacadasData
+                    ];
+                    break;
+
+                case 'example': // Tu caso anterior se mantiene
+                    $data = ['articles' => Timber::get_posts(['post_type' => 'post'])];
+                    break;
+            }
                 break;
         }
 
         return $data;
     }
-
+    
+    // LÓGICA PARA IDENTIFICAR TIPOS DE ARTICULOS Y AGRUPARLOS (TECNOLOGÍA, MINERÍA, ACTUALIDAD, ETC)
     private function __getTermData($objectTypeName, $postSlug, $objectId, $parent) {
         $data = [];
 
@@ -109,6 +149,8 @@ class PageController {
         return $data;
     }
 
+    // TRAE LO QUE NO CAMBIA ENTRE PÁGINAS. MENÚ PRINCIPAL, MENÚ DE FOOTERM LOGO, REDES SOCIALES, ETC
+    //INICIALIZA LA APLICACIÓN VUE
     private function __getGeneralData() {
         $primaryMenu    = Timber::get_menu('primary-menu');
         $footerMenu     = Timber::get_menu('footer-menu');

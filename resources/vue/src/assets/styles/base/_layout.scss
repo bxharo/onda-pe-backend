@@ -1,0 +1,65 @@
+@use 'mixins';
+@use 'variables';
+
+// Contenedores universales
+.l-container {
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    max-width: 1300px;
+    display:block;
+
+  @include mixins.media-breakpoint-up(lg) {
+        padding: 0 20px;
+    }
+
+    &--article { max-width: 800px; }
+    &--full { max-width: 1300px; }
+}
+
+// El esqueleto Maestro de 2 columnas (Home, Categorías, etc.)
+.c-main-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+
+    .c-content-area { 
+        width: 100%;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .c-sidebar {
+        width: 100%;
+        margin-top: 60px; // Separación cuando está abajo
+    }
+    
+    @include mixins.media-breakpoint-up(lg) {
+        display: grid;
+        grid-template-columns: 1fr 320px; 
+        gap: 50px;
+        align-items: start;
+        margin-top:25px;
+
+        .c-sidebar {
+            margin-top: 0;
+            width: auto;
+            border-left: 1px solid variables.$border-light;
+            padding-left: 30px;
+        }
+    }
+}
+
+// Grids genéricos que podrían ir en otras páginas
+.c-grid-row-3, .c-grid-row-2 {
+    display: grid;
+    gap: 30px;
+    margin-bottom: 60px;
+    
+    @include mixins.media-breakpoint-up(md) {
+        &.c-grid-row-3 { grid-template-columns: repeat(3, 1fr); }
+        &.c-grid-row-2 { grid-template-columns: repeat(2, 1fr); }
+    }
+}
+

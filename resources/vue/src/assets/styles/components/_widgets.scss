@@ -1,0 +1,344 @@
+/* ==========================================================================
+   WIDGETS: Bloques modulares y dinámicos
+   ========================================================================== */
+@use '../base/variables';
+@use '../base/mixins';
+
+// 1. CONTENEDOR BASE (Contenedor genérico para cualquier parte del sitio)
+.c-widget {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid variables.$border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  // Título estilo Periódico con línea lateral (Flexible)
+  &__title {
+    @include mixins.editorial-label(11px, 1.5px);
+    
+    display: flex;
+    align-items: center;
+    margin-bottom: 3rem;
+    color: variables.$black;
+
+    &::after {
+      content: '';
+      flex-grow: 1;
+      height: 1px;
+      margin-left: 1.5rem;
+      background-color: variables.$black;
+    }
+  }
+}
+
+// 2. SECCIÓN EDITORIAL (Específica para Sidebar y Home)
+.c-section {
+    &__title {
+    font-family: variables.$font-sans; // 1. Tipografía: Usamos la Sans más fuerte de tus variables
+    font-size: 1.2rem;      // Tamaño pequeño pero potente
+    font-weight: 900;       // El "Black" de la familia
+    text-transform: uppercase;
+    letter-spacing: 0.04em; // Ese aire entre letras del modelo
+    display: block;  
+    padding-bottom: 0.4rem;
+    margin-bottom: 2.5rem; 
+    border-bottom: 2px solid variables.$black;
+    color: variables.$black;
+    
+    // Si quieres el efecto de "Archivo: 1976" con el año más fino:
+    span {
+      font-weight: 400;
+      opacity: 0.7;
+    }
+  }
+}
+
+// 3. RANKING (Lo más leído)
+.c-ranking {
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.6rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__number {
+    font-size: 1.9rem;
+    font-weight: variables.$font-black; // Peso 900
+    line-height: 1;
+    color: variables.$accent-blue; // #00A3C4
+    margin-right: 1.3rem;
+  }
+
+  &__text {
+    h4 {
+      font-family: variables.$font-serif;
+      font-size: 1.5rem;
+      font-weight: variables.$font-black;
+      line-height: 1.2;
+      margin-bottom: 0.4rem;
+      color: variables.$black;
+    }
+
+    p {
+      font-family: variables.$font-sans; 
+      font-size: 1.1rem; // Tamaño de lectura rápida
+      line-height: 1.5;
+      color: variables.$text-muted; // #555
+
+    }
+  }
+}
+
+// 4. OPINIÓN (Bloque con avatares redondos)
+.c-opinion {
+  $root: &; // Guardamos ".c-opinion" en una variable
+    
+  &__item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2.6rem;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      #{$root}__avatar { // El linter no lee el string completo, así que NO falla
+        filter: grayscale(0%);
+      }
+      
+      #{$root}__title {
+        text-decoration: none;
+      }
+    }
+  }
+
+  &__avatar {
+    width: 50px;
+    height: 55px;
+    border-radius: 50%; // Naturaleza circular para distinguir autores
+    object-fit: cover;
+    background-color: variables.$gray-light;
+    filter: grayscale(100%); // Estética editorial seria
+    
+    @include mixins.transition(0.3s); // Mixin Onda
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__author {
+    @include mixins.editorial-label(10px, 1px);
+    
+    color: variables.$accent-blue; // ¡Ahora sí saldrá celeste!
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+
+  &__title {
+    font-family: variables.$font-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: variables.$black;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+
+}
+
+// 5. EDITOR'S PICK (Horizontal y compacto)
+.c-editors-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.c-pick-item {
+  $root: &;
+
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  margin-bottom: 1.5;
+  gap: 1.5rem;
+  align-items: start;
+
+  &__image {
+    width: 70px;
+    height: 70px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background-color: variables.$gray-light;
+      
+      @include mixins.transition(0.4s);
+    }
+  }
+
+  &__content {
+    h4 {
+      font-family: variables.$font-serif;
+      font-size: 1.5rem;
+      font-weight: variables.$font-bold;
+      line-height: 1.25;
+      color: variables.$black;
+      margin: 0;
+
+      @include mixins.transition(0.3s);
+    }
+  }
+
+  // HOVER: Sutil y editorial
+  &:hover {
+    #{$root}__image img {
+      transform: scale(1.05); // Zoom muy leve, muy elegante
+    }
+  }
+
+  .c-tag-mini {
+  @include mixins.editorial-label(9px, 0.5px);
+  
+  color: variables.$accent-blue;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  }
+
+}
+
+// 6. ARCHIVO (Highlight histórico)
+.c-archive-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2.5rem 2rem;;
+  overflow: hidden;
+  background-color: variables.$white;
+  border: 1px solid variables.$black;
+  z-index: 1;
+
+  &__today {
+    @include mixins.editorial-label(0.9rem, 0.1rem);
+    
+    color: variables.$accent-blue;
+    margin-bottom: 0.2rem;
+  }
+
+  &__headline {
+    position: relative;
+    z-index: 2;
+    font-family: variables.$font-serif;
+    font-size: 1.6rem;
+    font-weight: variables.$font-black;
+    line-height: 1.2;
+    margin-bottom: 0;
+  }
+
+  &__excerpt {
+    font-family: variables.$font-serif;
+    font-style: italic; // Clave para el look de "crónica"
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #888;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    z-index: 2;
+    margin-top: 0.5rem;
+    margin-bottom: 0.2rem;
+  }
+
+  &__link {
+    @include mixins.editorial-label(0.9rem, 0.05rem);
+    
+    color: variables.$black;
+    display: inline-block;
+    width: fit-content;
+    text-decoration: none; // Quitamos underline para usar solo el border
+    border-bottom: 1px solid variables.$black;
+    margin-top: 0.8rem;
+    padding-bottom: 2px; // Espacio entre texto y línea
+        
+    @include mixins.transition(0.3s);
+
+    &:hover {
+      color: variables.$accent-blue;
+      border-bottom-color: variables.$accent-blue;
+    }
+  }
+
+  
+  &__bg-number {
+    position: absolute;
+    right: -0.8rem;
+    bottom: -1.2rem; // Un poco más arriba que tu código anterior
+    z-index: 1;
+    font-family: variables.$font-sans;
+    font-size: 7.5rem; // Tamaño masivo
+    font-weight: 900; // Peso Black
+    line-height: 1;
+    color: variables.$gray-light;
+    opacity: 0.6; // Más sutil que el 0.3 que tenías
+    pointer-events: none; // Para que no interfiera con el click del link
+    user-select: none;
+  }
+}
+
+// 7. MARKET BAR
+.c-market-bar {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid variables.$black;
+  font-family: variables.$font-sans;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+  }
+
+  &__location {
+    font-size: 1rem; // ~11px
+    font-weight: 900;
+    letter-spacing: 0.08em;
+  }
+
+  &__weather {
+    font-size: 1rem;
+    font-weight: 700;
+    color: variables.$black;
+  }
+
+  &__data {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 1rem; // ~10px
+    color: #666;
+    font-weight: 600;
+  }
+}
+
+.c-market-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+
+  &--up {
+    color: #2e7d32; // Un verde más "prensa" (menos brillante)
+    font-size: 0.9rem;
+  }
+
+  &--down {
+    color: #c62828; // Un rojo editorial
+    font-size: 0.9rem;
+  }
+}

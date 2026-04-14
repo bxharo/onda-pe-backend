@@ -1,0 +1,118 @@
+/* ==========================================================================
+   COMPONENT: Article Preview
+   Description: Componente central para la pre visualización de noticias.
+   Variantes: .is-hero (Portada), .is-triple (Columnas), .is-grid (Grillas).
+   Responsabilidad: Tipografía editorial, tratamiento de imagen y estados hover.
+   ========================================================================== */
+
+@use '../base/variables';
+@use '../base/mixins';
+
+.c-article-preview {
+  display: block;
+  text-decoration: none;
+  color: variables.$black;
+  
+  @include mixins.transition(0.3s);
+
+  &:hover {
+    opacity: 0.9;
+    
+    .c-article-preview-image-wrapper img {
+      transform: scale(1.05);
+    }
+  }
+
+  // --- ELEMENTOS INTERNOS (Kebab-case obligatorio) ---
+  
+  &-image-wrapper {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    background-color: variables.$gray-light;
+    aspect-ratio: 1 / 1;
+
+    img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      
+      @include mixins.transition(0.5s);
+    }
+  }
+
+  &-tag {
+    @include mixins.editorial-label(10px, 1px);
+    
+    display: block;
+    margin-bottom: 1rem;
+    color: variables.$accent-blue;
+  }
+
+  &-title {
+    font-family: variables.$font-main;
+    font-weight: variables.$font-black;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    letter-spacing: -0.8px;
+    font-size: 2.4rem;
+  }
+
+  &-excerpt {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    color: variables.$text-muted;
+  }
+
+  &-meta {
+    @include mixins.editorial-label(10px, 0.5px);
+    
+    color: variables.$gray-dark;
+  }
+
+  // --- VARIANTES ---
+
+  &.is-hero {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+
+    @include mixins.media-breakpoint-up(md) {
+      grid-template-columns: 1fr 1.2fr;
+    }
+
+    .c-article-preview-title {
+      font-size: clamp(4rem, 6vw, 7.5rem);
+      line-height: 0.9;
+    }
+
+    .c-article-preview-image-wrapper {
+      height: 48rem;
+      margin-bottom: 0;
+    }
+  }
+
+  &.is-triple {
+        padding-bottom: 2rem;
+        border-bottom: 1px solid variables.$border-light; // Línea horizontal sutil
+
+        @include mixins.media-breakpoint-up(md) {
+        border-bottom: none;
+        border-right: 1px solid variables.$border-light;
+        padding-right: 2rem;
+        padding-bottom: 0;
+        }
+
+        &:last-child { border: none; }
+
+        .c-article-preview-title {
+        font-size: 2.2rem;
+        }
+    }
+  
+
+  &.is-grid {
+    .c-article-preview-image-wrapper { height: 26rem; }
+  }
+}

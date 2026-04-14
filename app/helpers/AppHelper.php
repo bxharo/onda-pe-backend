@@ -42,7 +42,7 @@ class Apphelper {
         $folders = [];
 
         foreach ($iterator as $item) {
-            if (!str_contains($item->getFilename(), 'core')) {
+            if (!str_contains($item->getFilename(), 'Core') && !str_contains($item->getFilename(), 'core')){
                 $folders[] = $item->getFilename();
             }
         }

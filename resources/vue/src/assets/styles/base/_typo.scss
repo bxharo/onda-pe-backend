@@ -1,1 +1,56 @@
-/* This files is destined for load custom fonts (woff, etc.) */
+/* ==========================================================================
+   TYPOGRAPHY: Reglas de lectura y jerarquía editorial
+   ========================================================================== */
+@use 'variables';
+@use 'mixins';
+
+// 1. TÍTULOS GLOBALES (Reset y Estilo base)
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-family: variables.$font-serif;
+  font-weight: variables.$font-black;
+  line-height: 1.1; // Un poco más apretado para look periodístico
+  color: variables.$black;
+}
+
+// 2. ENLACES GLOBALES
+a {
+  text-decoration: none;
+  color: inherit;
+  
+  @include mixins.transition(0.2s);
+
+  &:hover {
+    opacity: 0.8;
+    color: variables.$accent-blue;
+  }
+}
+
+// 3. CUERPO DE NOTICIA (Entry Content / Gutenberg)
+// Optimizado para lectura larga en el blog.
+.entry-content {
+  p {
+    margin-bottom: 1.5rem;
+    font-family: variables.$font-sans;
+    font-size: variables.$fs-18;
+    line-height: 1.8; 
+    color: variables.$text-main;
+  }
+
+  h2 {
+    margin: 2.5rem 0 1.2rem; // Más aire arriba para separar secciones
+    font-family: variables.$font-serif;
+    font-size: variables.$fs-32;
+    font-weight: variables.$font-black;
+  }
+
+  blockquote {
+    margin: 40px 0;
+    padding-left: 20px;
+    border-left: 3px solid variables.$accent-blue;
+    font-family: variables.$font-serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    color: variables.$text-muted;
+  }
+}

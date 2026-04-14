@@ -1,22 +1,124 @@
+/* ==========================================================================
+   PAGE: Home (Onda.pe)
+   Description: Orquestación del layout principal y secciones exclusivas.
+   ========================================================================== */
 @use '../base/variables';
-@use '../base/core';
+@use '../base/mixins';
 
-.c-section {
-  &--home {
-    outline: none;
+.p-home {
+  // 1. EL HERO (Ajuste de aire inicial)
+  .c-home-hero {
+    margin-bottom: 2rem;
+  }
 
-    .c-welcome {
-      h1 {
-        color: variables.$white-color;
-      }
+  // 2. BREAKING NEWS (Exclusivo de la Home)
+  .breaking-news {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.2rem 1rem;
+    margin-bottom: 4rem;
+    background: variables.$black;
+    color: variables.$white;
+    width: 100%;           // Asegura que no mida más del 100%
+    overflow: hidden;      // Evita que el texto largo cree scroll
+    white-space: nowrap;   // Mantiene el estilo de "cinta", pero sin empujar el layout
+
+    .breaking-label {
+      @include mixins.editorial-label(11px, 1px);
+      
+      color: variables.$accent-blue;
+    }
+    
+    @include mixins.media-breakpoint-up(md) {
+      padding: 1.2rem 2rem;
+      white-space: normal; // En escritorio ya puede fluir normal
     }
   }
-}
 
-@include core.media-breakpoint-up(lg) {
-  .c-section {
-    &--home {
-      outline: none;
+  // 3. SECCIÓN TRIPLE (Layout de grilla)
+  .c-triple-section {
+    display: grid;
+    gap: 2rem;
+    margin: 4rem 0;
+    padding: 4rem 0 2rem;
+    border-top: 2px solid variables.$black;
+
+    @include mixins.media-breakpoint-up(md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include mixins.media-breakpoint-up(lg) {
+      grid-template-columns: repeat(3, 1fr); // 3 columnas solo en desktop
+    }
+
+  }
+
+  // 4. ITEMS DE GRILLA (Triple & Art)
+ .c-article-preview.is-triple { // <--- Cambiado para que coincida con tu HTML
+    
+    .c-article-preview-tag { // <--- Ajustado al nombre de clase de tu template
+      @include mixins.editorial-label(10px, 0.5px);
+      
+      display: block;
+      margin-bottom: 0.8rem;
+      color: variables.$accent-blue;
+      text-transform: uppercase;
+    }
+
+    .c-article-preview-title { // <--- Ajustado
+      margin-bottom: 1rem;
+      font-family: variables.$font-black;
+      font-size: 2rem;      // El tamaño reducido que buscamos
+      line-height: 1.1;
+      font-weight: variables.$font-black;
+      letter-spacing: -0.5px;
+    }
+
+    .c-article-preview-excerpt { // <--- Ajustado
+      font-size: 1.4rem;      // El tamaño reducido para el párrafo
+      line-height: 1.4;
+      color: variables.$text-muted;
+    }
+  }
+
+  // 5. ROW TEXT ONLY (Sección de impacto/frase)
+  .c-row-text-only {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 6rem;
+    padding: 8rem 0;
+    text-align: center;
+    
+    &-title {
+      margin-bottom: 2rem;
+      font-family: variables.$font-serif;
+      font-size: 4.2rem;
+      line-height: 1.1;
+      font-weight: variables.$font-black;
+    }
+
+    &-excerpt {
+      font-size: 1.8rem;
+      line-height: 1.5;
+      color: variables.$text-main;
+    }
+  }
+
+  // 6. TOQUE MAESTRO: FEATURED HERO
+  .main-featured {
+    h1 {
+      font-family: variables.$font-serif;
+      font-size: clamp(4rem, 8vw, 6.4rem); // Tipografía fluida
+      font-weight: variables.$font-black;
+      line-height: 0.95;
+      letter-spacing: -2px;
+      
+      @include mixins.transition(0.3s);
+
+      &:hover { 
+        color: variables.$accent-blue; 
+      }
     }
   }
 }

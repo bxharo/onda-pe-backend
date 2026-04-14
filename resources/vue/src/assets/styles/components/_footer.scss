@@ -1,24 +1,176 @@
+/* ==========================================================================
+   COMPONENT: Footer
+   Description: Cierre editorial de la página. 
+   Incluye: Brand, Navegación, Suscripción y Social links.
+   ========================================================================== */
+
 @use '../base/variables';
-@use '../base/core';
+@use '../base/mixins';
 
 .c-footer {
-  color: variables.$white-color;
-  background: variables.$black-color-100;
-  padding: 1.5rem 0;
+  background-color: variables.$white;
+  padding: 80px 0 40px;
+  border-top: 2px solid variables.$black;
+  margin-top: 80px;
 
-  &__container {
+  // 1. GRID PRINCIPAL (Layout adaptable)
+  .c-footer-content {
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
+    gap: 40px;
+    margin-bottom: 60px;
+
+    @include mixins.media-breakpoint-up(md) {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 2fr;
+      align-items: start;
+      text-align: left;
+      gap: 60px;
+      margin-bottom: 80px;
+    }
   }
 
-  &__logo {
-    display: inline-block;
-    width: 120px;
-    padding-left: 1rem;
+  // 2. BRANDING (Logo y Tagline)
+  .c-footer-brand {
+    .footer-logo {
+      font-family: variables.$font-sans;
+      font-size: 48px;
+      font-weight: variables.$font-black;
+      letter-spacing: -2.5px;
+      line-height: 1;
+      margin-bottom: 25px;
+      display: block;
 
-    img {
-      width: 100%;
+      a { 
+        text-decoration: none; 
+        color: variables.$black; 
+      }
+
+      span { 
+        color: variables.$accent-blue; 
+        margin-left: -2px; 
+      }
+    }
+
+    .footer-tagline {
+      font-size: 15px;
+      line-height: 1.5;
+      color: variables.$text-muted;
+      max-width: 320px;
+      font-weight: 500;
+    }
+  }
+
+  // 3. NAVEGACIÓN (Uso de Lógica Editorial)
+  .c-footer-nav {
+    h5 {
+      @include mixins.editorial-label(11px, 1px);
+      
+      margin-bottom: 25px;
+    }
+
+    nav a {
+      display: block;
+      text-decoration: none;
+      color: variables.$black;
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      
+      @include mixins.transition(0.2s);
+
+      &:hover { color: variables.$accent-blue; }
+    }
+  }
+
+  // 4. SUSCRIPCIÓN (Formulario minimalista)
+  .c-footer-subscribe {
+    h5 {
+      font-family: variables.$font-serif;
+      font-size: 24px;
+      font-weight: variables.$font-black;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 12px;
+      color: variables.$text-muted;
+      max-width: 320px;
+      line-height: 1.4;
+      margin: 0 auto 30px;
+
+      @include mixins.media-breakpoint-up(md) { margin: 0 0 30px; }
+    }
+
+    .c-subscribe-form {
+      display: flex;
+      align-items: center;
+      border-bottom: 2px solid variables.$black;
+      padding-bottom: 5px;
+      max-width: 350px;
+      margin: 0 auto;
+
+      @include mixins.media-breakpoint-up(md) { margin: 0; }
+
+      input {
+        @include mixins.button-reset; // Reutilizamos reset para inputs limpios
+        
+        font-family: variables.$font-sans;
+        font-size: 15px;
+        flex-grow: 1;
+        padding: 3px 0;
+        cursor: text;
+      }
+
+      button {
+        @include mixins.button-reset;
+        @include mixins.editorial-label(11px, 1px);
+        
+        padding-left: 15px;
+        
+        @include mixins.transition(0.2s);
+
+        &:hover { color: variables.$accent-blue; }
+      }
+    }
+  }
+
+  // 5. BOTTOM BAR (Social y Legal)
+  .c-footer-bottom {
+    padding: 30px 0; 
+    border-top: 1px solid variables.$border-light;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+    @include mixins.media-breakpoint-up(md) {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 25px;
+
+      a {
+        @include mixins.editorial-label(11px, 1px);
+        
+        text-decoration: none;
+        color: variables.$black;
+        
+        @include mixins.transition(0.2s);
+
+        &:hover { color: variables.$accent-blue; }
+      }
+    }
+
+    .copyright {
+      font-size: 11px;
+      font-weight: 700;
+      color: variables.$text-muted; // Usamos variable en lugar de #999
     }
   }
 }
-

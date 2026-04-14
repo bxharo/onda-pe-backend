@@ -1,30 +1,85 @@
+/* ==========================================================================
+   COMPONENT: Link
+   Description: Variantes de enlaces interactivos para navegación y lectura.
+   ========================================================================== */
+
 @use '../base/variables';
+@use '../base/mixins';
 
 .c-link {
-  font-weight: variables.$font-medium;
+  display: inline-block;
+  padding: 0;
+  font-weight: variables.$font-bold;
+  color: variables.$black;
   text-decoration: none;
-  transition: all 0.3s;
-  cursor: pointer;
-  border: none;
   background: transparent;
+  border: none;
+  cursor: pointer;
+  
+  @include mixins.transition(0.2s);
 
-  &:is(:hover, :focus, :active) {
-    text-decoration: none;
+  // 1. ESTADO HOVER / FOCUS (Efecto subrayado moderno)
+  &:hover, 
+  &:focus {
+    outline: none;
+    color: variables.$accent-blue;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
   }
 
+  // 2. VARIANTE: PRINCIPAL (Color de marca)
   &--primary {
-    color: variables.$primary-color;
-
-    &:is(:hover, :focus, :active) {
-      color: variables.$primary-color-500;
+    color: variables.$accent-blue;
+    
+    &:hover {
+      color: variables.$black;
     }
   }
 
-  &--white {
-    color: variables.$gray-color;
+  // 3. VARIANTE: MUTED (Textos secundarios o pies de foto)
+  &--muted {
+    font-family: variables.$font-sans;
+    font-weight: variables.$font-regular; // Corregido: Usamos peso, no familia
+    font-size: 0.9em;
+    color: variables.$text-muted;
 
-    &:is(:hover, :focus, :active) {
-      color: variables.$gray-color-500;
+    &:hover {
+      color: variables.$black;
+    }
+  }
+
+  // 4. VARIANTE: MORE (Estilo editorial con flecha)
+  &--more {
+    @include mixins.editorial-label(11px, 1px);
+    
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    &::after {
+      content: '→';
+      display: inline-block;
+      
+      @include mixins.transition(0.2s);
+    }
+
+    &:hover {
+      text-decoration: none; // Evitamos subrayado en esta variante
+      
+      &::after {
+        transform: translateX(4px);
+      }
+    }
+  }
+
+  // 5. VARIANTE: WHITE (Para fondos oscuros/negros)
+  &--white {
+    color: variables.$white;
+
+    &:hover {
+      color: variables.$white;
+      opacity: 0.8;
     }
   }
 }

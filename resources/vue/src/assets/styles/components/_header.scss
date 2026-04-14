@@ -1,32 +1,125 @@
+/* ==========================================================================
+   COMPONENT: Header
+   Description: Identidad principal y navegación de categorías.
+   Estética: Logo masivo, bordes arquitectónicos y navegación encapsulada.
+   ========================================================================== */
+
 @use '../base/variables';
 @use '../base/mixins';
-@use '../base/core';
 
+// 1. CONTENEDOR PRINCIPAL
 .c-header {
-  background: variables.$black-color-100;
-  z-index: 1000 !important;
-  position: sticky;
-  left: 0;
-  top: 0;
+  position: relative;
+  z-index: 100;
+  padding: 40px 0 0;
+  background-color: variables.$white;
+}
 
-  @include mixins.transition(0.5s);
+// 2. BLOQUE SUPERIOR (Logo + Info)
+.c-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 30px;
+}
 
-  .c-brand {
-    &__link {
-      display: block;
-      height: 40px;
-    }
+.c-logo {
+  font-family: variables.$font-sans;
+  font-size: variables.$fs-80;
+  font-weight: variables.$font-black;
+  line-height: 0.8;
+  letter-spacing: -4px;
+  text-decoration: none;
+  color: variables.$black;
+  
+  span {
+    color: variables.$accent-blue;
+  }
+}
 
-    &__image {
-      height: 100%;
-      object-fit: contain;
-    }
+.c-ed-info {
+  @include mixins.editorial-label(11px, 0.5px);
+  
+  text-align: right;
+  line-height: 1.4;
+  color: variables.$black;
+}
+
+// 3. NAVEGACIÓN
+.c-nav {
+  width: 100%;
+  display: block;
+  flex-wrap: wrap;
+  margin-top: 0;
+  border-top: 1px solid variables.$black;
+  border-bottom: 1px solid variables.$black;
+}
+
+.c-nav-inner {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.c-nav-list {
+  @include mixins.ul-reset;
+  
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+// 4. BOTONES DE CATEGORÍA
+.c-nav-btn {
+  @include mixins.editorial-label(11px, 0.5px);
+  
+  display: inline-block;
+  padding: 8px 15px;
+  text-decoration: none;
+  color: variables.$black;
+  border: 1px solid variables.$black;
+  
+  @include mixins.transition(0.3s);
+  
+  &:hover,
+  &.is-active {
+    color: variables.$white;
+    background-color: variables.$black;
+  }
+}
+
+// 5. RESPONSIVE
+@include mixins.media-breakpoint-down(md) {
+  .c-header {
+    padding: 20px 0 0;
   }
 
-  .c-nav {
-    height: 83px;
-    display: flex;
-    justify-content: space-between;
+  .c-header-top {
+    flex-direction: column;
     align-items: center;
+    gap: 10px;
+  }
+
+  .c-logo {
+    font-size: 50px;
+    letter-spacing: -2px;
+  }
+
+  .c-ed-info {
+    text-align: center;
+  }
+
+  .c-nav-list {
+    display: flex; 
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  // 3. Ajusta los botones para que quepan en pantallas pequeñas
+  .c-nav-btn {
+    padding: 4px 8px;
+    font-size: 9px;
   }
 }

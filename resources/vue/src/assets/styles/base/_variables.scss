@@ -1,60 +1,62 @@
-@import 'https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700;800;900&display=swap';
+/* ==========================================================================
+   VARIABLES: El ADN de Onda.
+   ========================================================================== */
 
-/*
-* -----------------------------------------------------------/
-* 1. Colors
-* -----------------------------------------------------------/
-*/
+// 1. TIPOGRAFÍA
+$font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+$font-serif: 'Playfair Display', serif;
+$font-main: $font-sans;
+$font-secondary: $font-serif;
 
-/* Primary colors */
-$primary-color: #0064ec; /* 400 */
-$primary-color-500: #0449c9;
+/* 1.1 Pesos de Fuente */
+$font-regular: 400;
+$font-bold: 700;
+$font-black: 900;
 
-/* Secondary colors */
-$secondary-color-200: #ac8cd6;
-$secondary-color: #6600ec; /* 400 */
-
-/* Gray colors */
-$gray-color: #e5e5e5; /* 200 */
-$gray-color-300: #d6d6d6;
-$gray-color-400: #bdbdbd;
-$gray-color-500: #a6a6a6;
-
-/* Util colors */
-$white-color: #fff;
-$black-color: #202120;
-$black-color-100: #1b1c1c;
-$util-success-color: #0f6;
-$util-warning-color: #ffb800;
-$util-alert-color: #ff4a4a;
-$util-info-color: #00b2ff;
-
-/*
-* -----------------------------------------------------------/
-* 2. Fonts
-* -----------------------------------------------------------/
-*/
-
-/* 2.1 Font Sizes */
+/* 1.2 Escala de Tamaños */
+$fs-10: 10px;
+$fs-11: 11px;
 $fs-12: 12px;
 $fs-14: 14px;
 $fs-16: 16px;
 $fs-18: 18px;
-$fs-21: 21px;
-$fs-25: 25px;
-$fs-30: 30px;
-$fs-35: 35px;
-$fs-40: 40px;
+$fs-24: 24px;
+$fs-32: 32px;
+$fs-48: 48px;
+$fs-60: 60px;
+$fs-80: 80px;
 
-/* 2.2 Font Weights */
-$font-light: 300;
-$font-regular: 400;
-$font-medium: 500;
-$font-semibold: 600;
-$font-bold: 700;
-$font-extrabold: 800;
-$font-black: 900;
+// 2. COLORES (Corregidos a formato corto)
+$white: #fff;
+$black: #000;
+$accent-blue: #00A3C4;
+$error-red: #e74c3c;
 
-/* 2.3 Font Families */
-$body-font-family: 'Work Sans', sans-serif;
-$secondary-font-family: 'Work Sans', sans-serif;
+// Grises y Fondos
+$gray-dark: #555; 
+$gray-light: #eee;
+$gray-bg: #f9f9f9;
+
+/* Mapeo Lógico */
+$text-main: $black;
+$text-muted: $gray-dark;
+$border-color: $black;
+$border-light: $gray-light;
+$bg: $white; // Definimos el color de fondo global
+$font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+/* Transparencias de UI */
+$black-02: rgba($black, 0.02);
+$white-10: rgba($white, 0.1);
+$black-80: rgba($black, 0.8);
+
+// 3. LAYOUT & ESTRUCTURA
+$container-xl: 1300px;
+$gap: 30px;
+$radius-none: 0px;
+
+// 4. BREAKPOINTS
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+$breakpoint-xl: 1300px;

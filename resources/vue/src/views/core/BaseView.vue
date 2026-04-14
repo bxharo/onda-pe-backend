@@ -8,8 +8,16 @@ defineProps<{
 </script>
 
 <template>
-  <section>
-    <NotFoundView v-if="content.post.error"></NotFoundView>
-    <slot v-else-if="content.post.title"></slot>
-  </section>
+  <main class="c-app-main"> 
+    <NotFoundView v-if="content?.post?.error" />
+
+    <div v-else-if="content?.post?.title || !content?.post" class="l-container">
+      <slot></slot>
+    </div>
+
+    <div v-else class="l-container">
+      <p>Cargando...</p>
+    </div>
+
+  </main>
 </template>

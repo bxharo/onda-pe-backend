@@ -1,9 +1,9 @@
 <?php
 
 /* Setting GOOLE_API_KEY to ACF Google Maps */
-if (isset(ENV['GOOGLE_API_KEY'])) {
+if (isset($_ENV['GOOGLE_API_KEY'])) {
     add_filter('acf/fields/google_map/api', function($api) {
-        $api['key'] = ENV['GOOGLE_API_KEY'];
+        $api['key'] = $_ENV['GOOGLE_API_KEY'];
 
         return $api;
     });

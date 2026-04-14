@@ -13,5 +13,6 @@ module.exports = {
   ],
   rules: {
     'vue/no-v-model-argument': 'off',
+    'vue/no-v-html': 'off',
   }
 };

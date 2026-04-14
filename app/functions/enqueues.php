@@ -1,10 +1,10 @@
 <?php
 
 function register_dashboard_view($view) {
-    $manifestTemp = (ENV['APP_ENV'] == 'development') ? 'temp/.vite/' : '';
+    $manifestTemp = ($_ENV['APP_ENV'] == 'development') ? 'temp/.vite/' : '';
     $manifest = json_decode(file_get_contents(__DIR__ . "/../static/admin/{$manifestTemp}manifest.json"));
 
-    $staticDir = (ENV['APP_ENV'] == 'development') ? 'temp/' : '';
+    $staticDir = ($_ENV['APP_ENV'] == 'development') ? 'temp/' : '';
     $resource = "src/core/{$view}.ts";
     $resourceFileJs = $manifest->{$resource}->{'file'};
     $resourceFilesCss = $manifest->{$resource}->{'css'};
@@ -29,7 +29,7 @@ function register_dashboard_view($view) {
 }
 
 add_action('wp_enqueue_scripts', function () {
-    $manifestTemp   = (ENV['APP_ENV'] == 'development') ? 'temp/.vite/' : '';
+    $manifestTemp   = ($_ENV['APP_ENV'] == 'development') ? 'temp/.vite/' : '.vite/';
     $manifest       = json_decode(file_get_contents(__DIR__ . "/../static/public/{$manifestTemp}manifest.json"));
 
     /**
@@ -42,7 +42,7 @@ add_action('wp_enqueue_scripts', function () {
         if (!strpos($file, '.map')) {
             AppHelper::register_assets('script', [
                 'handle'    => 'pandawp/script/' . $file,
-                'src'       => get_theme_file_uri('/static/public/' . ((ENV['APP_ENV'] == 'development') ? "temp/{$file}" : "{$file}")),
+                'src'       => get_theme_file_uri('/static/public/' . (($_ENV['APP_ENV'] == 'development') ? "temp/{$file}" : "{$file}")),
                 'deps'      => [],
                 'ver'       => '1.0.0',
                 'in_footer' => true
@@ -59,7 +59,7 @@ add_action('wp_enqueue_scripts', function () {
     array_map(function ($file) {
         AppHelper::register_assets('style', [
             'handle'    => 'pandawp/style/' . $file,
-            'src'       => get_theme_file_uri("/static/public/" . ((ENV['APP_ENV'] == 'development') ? "temp/{$file}" : "{$file}")),
+            'src'       => get_theme_file_uri("/static/public/" . (($_ENV['APP_ENV'] == 'development') ? "temp/{$file}" : "{$file}")),
             'deps'      => [],
             'ver'       => '1.0.0',
             'in_footer' => true

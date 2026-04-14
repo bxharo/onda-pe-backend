@@ -1,38 +1,43 @@
 <?php
 
-use App\Controllers\PageController;
-
 class PageRouter {
     public function __construct()
-    {
-        add_action('rest_api_init', function () {
-            register_rest_route('custom/v1', '/pages/(?P<slug>[a-zA-Z0-9-]+)', array(
-                'methods' => 'GET',
-                'callback' => array($this, 'show'),
-                'permission_callback' => function ($request) {
-                    return true;
-                },
-                'args'  => $this->__getArgs(['type', 'type-name'])
-            ));
-        });
+    {   
+        error_log("🚩 LOG: Instanciando PageRouter");
+        // Si la API ya se inició, registramos de inmediato. Si no, esperamos al hook.
+        if (did_action('rest_api_init')) {
+            $this->register_routes();
+        } else {
+            add_action('rest_api_init', [$this, 'register_routes']);
+        }
+    }
+
+    public function register_routes() {
+        error_log("🚩 LOG: Intentando registrar rutas en custom/v1");
+        register_rest_route('custom/v1', '/pages/(?P<slug>[a-zA-Z0-9-]+)', array(
+            'methods' => 'GET',
+            'callback' => array($this, 'show'),
+            'permission_callback' => '__return_true', // Simplificado para probar
+            'args'  => $this->__getArgs(['type', 'type-name'])
+        ));
     }
 
     public function show($request) {
         try {
-            $data = (new PageController())->show($request);
+            // Instanciamos el controlador
+            $controller = new \App\Controllers\PageController();
+            $data = $controller->show($request);
 
-            return wp_send_json([
-                'code'      => 200,
-                'message'   => $data ? 'Panda WP content here!!' : 'No Panda WP content 😥',
-                'data'      => $data,
-                'status'    => $data ? true : false
-            ], 200);
+            // Simplemente retornamos el array; WP lo enviará como JSON
+            return [
+                'code'    => 200,
+                'message' => $data ? 'Panda WP content here!!' : 'No Panda WP content 😥',
+                'data'    => $data,
+                'status'  => $data ? true : false
+            ];
         } catch (Exception $e) {
-            return wp_send_json([
-                'code'      => $e->getCode() ?? 502,
-                'message'   => $e->getMessage(),
-                'status'    => false
-            ], $e->getCode() ?? 502);
+            // En caso de error, devolvemos un objeto de error de WP
+            return new WP_Error('api_error', $e->getMessage(), ['status' => 500]);
         }
     }
 

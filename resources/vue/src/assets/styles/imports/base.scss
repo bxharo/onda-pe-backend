@@ -1,5 +1,10 @@
-@use '../base/base';
-@use '../base/helpers';
-@use '../base/settings';
-@use '../base/reset';
-@use '../base/typo';
+@use '../base/variables' as *; // 1. Primero las variables
+@use '../base/mixins' as *;    // 2. Las herramientas 
+@use '../base/reset';          // 3. Limpiar estilos del navegador
+@use '../base/settings';       // 4. Configuración global (box-sizing, etc)
+@use '../base/typo';           // 5. Reglas de fuentes
+@use '../base/core';           // 6. Estilos base (body, html)
+@use '../base/helpers';        // 7. Clases de utilidad (.text-center, etc)
+@use '../base/base';           // 8. Cualquier otra regla base
+@use '../base/layout';
+

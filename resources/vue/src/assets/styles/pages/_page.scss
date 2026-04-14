@@ -1,22 +1,35 @@
+/* ==========================================================================
+   PAGE: Generic Page (Static)
+   ========================================================================== */
 @use '../base/variables';
-@use '../base/core';
 
-.c-section {
-  outline: none;
+.c-page {
+  max-width: 80rem;
+  margin: 6rem auto;
+  padding: 0 2rem;
 
   &__title {
-    font-size: variables.$fs-30;
-    color: variables.$white-color;
-    font-weight: variables.$font-bold;
+    margin-bottom: 4rem;
+    text-align: center;
+    font-family: variables.$font-serif;
+    font-size: 4.8rem;
+    font-weight: variables.$font-black;
+    line-height: 1.1;
   }
 
-  .c-card-image {
-    height: 200px;
-  }
-}
+  &__content {
+    font-size: 1.8rem;
+    line-height: 1.8;
+    color: variables.$black;
 
-@include core.media-breakpoint-up(lg) {
-  .c-section {
-    outline: none;
+    p { 
+      margin-bottom: 2.4rem; 
+    }
+
+    h2, h3 {
+      margin: 4rem 0 2rem;
+      font-family: variables.$font-serif;
+      font-weight: variables.$font-black;
+    }
   }
 }

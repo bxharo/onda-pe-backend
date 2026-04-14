@@ -23,6 +23,8 @@
         "psr-4": {
             "PandaWP\\Console\\": "commands/",
             "Admin\\Pages\\": "app/admin/pages/",
+            "App\\": "api/app/",
+            "Api\\": "api/",
             "App\\Controllers\\": "api/app/controllers/",
             "App\\Models\\": "api/app/models/",
             "App\\Middlewares\\": "api/app/middlewares/",

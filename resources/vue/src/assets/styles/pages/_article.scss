@@ -1,0 +1,116 @@
+/* ==========================================================================
+   PAGE: Article (Single)
+   ========================================================================== */
+@use '../base/variables';
+@use '../base/mixins';
+
+.p-article {
+  padding: 6rem 0 8rem;
+
+  .container-article {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+}
+
+.c-article {
+  &__header {
+    margin-bottom: 5rem;
+    text-align: center;
+  }
+
+  &__tag {
+    display: block;
+    font-family: variables.$font-sans; // O la que uses para etiquetas
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: variables.$gray-dark; // Ajusta según tus variables
+    margin-bottom: 1.5rem;
+    }
+  
+  &__title {
+    font-family: variables.$font-serif; // Corregido: antes decía $fs-48
+    font-size: clamp(3.2rem, 8vw, 6.2rem);
+    font-weight: variables.$font-black;
+    line-height: 1.1;
+    margin-bottom: 2.5rem;
+  }
+
+  &__body {
+    font-size: 1.9rem;
+    color: variables.$black;
+    
+    // Títulos secundarios que vienen de WP
+    h2, h3 {
+      font-family: variables.$font-serif; 
+      font-weight: variables.$font-black;
+      font-size: 3rem; 
+      margin-top: 5rem; // Aire arriba
+      margin-bottom: 2.5rem; // Aire abajo
+    }
+    
+    // Solo párrafos que son hijos directos del body
+    & > p {
+      margin-bottom: 3rem;
+      line-height: 2;
+      color: variables.$black;
+    }
+    
+    // Efecto Capitular (Drop Cap) - Look Editorial
+    & > p:first-of-type::first-letter {
+      float: left;
+      margin: 0 1.5rem 0 0;
+      font-family: variables.$font-serif;
+      font-size: 8.5rem;
+      font-weight: variables.$font-black;
+      line-height: 1;
+      color: variables.$black;
+    }
+    
+    // Citas
+    blockquote {
+      margin: 4rem -2rem;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid variables.$black;
+      border-bottom: 1px solid variables.$black;
+      font-family: variables.$font-serif;
+      font-style: italic;
+      font-size: 2.2rem;
+      text-align: center;
+
+      // Estilo para la frase de la cita
+      p {
+        margin: 4rem -2rem; // Forzamos que no tenga margen
+        line-height: 1.1;     // Interlineado apretado para títulos
+        font-weight: variables.$font-bold; // Peso máximo
+        font-size: 3.2rem;
+        color: variables.$black;
+        }
+
+    }
+    
+    // IMAGEN PRINCIPAL DENTRO DEL BODY
+    img{
+      width: 100%;
+      max-height: 50rem;
+      margin-bottom: 4rem;
+      object-fit: cover;
+      object-position: center;
+      background-color: variables.$gray-light;
+      cursor: pointer;
+      
+      @include mixins.transition(0.6s);
+
+      &:hover {
+        transform: scale(1.02);
+        filter: contrast(1.1) brightness(0.9);
+      }
+
+      @include mixins.media-breakpoint-down(md) {
+        max-height: 30rem;
+      }
+    }
+  }
+}
