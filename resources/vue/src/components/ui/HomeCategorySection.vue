@@ -63,8 +63,8 @@ defineProps<{
     grid-template-columns: 1fr;
     align-items: start;
     
-    @media (min-width >= 1024px) {// A partir de 1024px se divide en: Bloque Destacado | Lista de 3
-      grid-template-columns: 1.5fr 1fr; 
+    @media (min-width: 1024px) {// A partir de 1024px se divide en: Bloque Destacado | Lista de 3
+      grid-template-columns: 1.9fr 1.1fr; 
     }
   }
 
@@ -82,15 +82,15 @@ defineProps<{
       grid-template-columns: 1fr; // Móvil: uno abajo del otro
 
       // A partir de tablets: IMAGEN a la izquierda, TEXTO a la derecha
-      @media (min-width >= 768px) {
-        grid-template-columns: 1.1fr 0.9fr; 
+      @media (min-width: 768px) {
+        grid-template-columns: 1.4fr 0.6fr; 
         align-items: start;
       }
 
       img {
         width: 100%;
-        aspect-ratio: 16 / 8;
-        height: 250px; 
+        aspect-ratio: 3 / 2;
+        height: 300px; 
         object-fit: cover;
       }
 
