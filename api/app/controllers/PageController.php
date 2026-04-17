@@ -23,7 +23,6 @@ class PageController {
                 if ($post) {
                     $post->title = $post->title();
                     $post->content = $post->content();
-                    // IMPORTANTE: Convertimos el objeto thumbnail en una URL de texto
                     $post->featured_image = $post->thumbnail() ? $post->thumbnail()->src() : null;
 
                     $pageData = [
@@ -92,13 +91,14 @@ class PageController {
                             'title_home'         => $heroPost->titulo_portada(),
                             'post_excerpt'  => $heroPost->post_excerpt,
                             'hero_image'    => $heroPost->thumbnail() ? $heroPost->thumbnail()->src() : null,
-                            'category_name' => (count($heroPost->terms())) ? $heroPost->terms()[0]->name : 'Actualidad'
+                            'category_name' => (count($heroPost->terms())) ? $heroPost->terms()[0]->name : 'Actualidad',
+                            'url'           => $heroPost->path() 
                         ];
                     }
                     // HOME - DESTACADAS
                     $destacadasPosts = Timber::get_posts([
                         'post_type' => 'post',
-                        'post_per_page' => 9,
+                        'posts_per_page' => 9,
                         'meta_query'     => [['key' => 'es_destacada', 'value' => '1']],
                         'orderby'        => 'menu_order',    // CAMBIADO: Usar el campo Orden
                         'order'          => 'ASC'            // CAMBIADO: De menor a mayor
@@ -114,7 +114,7 @@ class PageController {
                             'post_excerpt'  => $p->post_excerpt,
                             'category_name' => ($p_terms && !empty($p_terms)) ? $p_terms[0]->name : 'Destacado',
                             'image'    => $p->thumbnail() ? $p->thumbnail()->src() : null,
-                            'url'           => $p->link() // Si prefieres enviar la URL procesada desde PHP
+                            'url'           => $p->path() // Si prefieres enviar la URL procesada desde PHP
                         ];
                     }
                     
@@ -169,7 +169,7 @@ class PageController {
                                         }
                                         return count($terms) ? $terms[0]->name : '';
                                     })($p, $slug),
-                                    'url'        => $p->link()
+                                    'url'        => $p->path()
                                 ];
                             }, $cat_posts->to_array())
                         ];

@@ -30,18 +30,20 @@ const heroData = computed(() => {
   
   if (!post) {
     return { 
-      tag: '', 
       title: '', 
+      tag: '', 
       description: '', 
-      image: '' 
+      image: '',
+      url: ''
     };
   }
   
   return {
-    tag: (post.category_name || 'ACTUALIDAD').toUpperCase(),
     title: post.title_home || 'Cargando...',
+    tag: (post.category_name || 'ACTUALIDAD').toUpperCase(),
     description: post.post_excerpt || '',
-    image: post.hero_image || ''
+    image: post.hero_image || '',
+    url:post.url
   }
  
 })
@@ -75,37 +77,51 @@ const featuredPosts = computed(() => {
           />
 
           <section class="c-triple-section">
-            <div v-for="post in featuredPosts.slice(0, 3)" :key="post.id" class="c-article-preview is-triple">
+            <a 
+              v-for="post in featuredPosts.slice(0, 3)"
+              :key="post.id" 
+              :href="post.url" 
+              class="c-article-preview is-triple">
               <span class="c-article-preview-tag">{{ post.category }}</span>
               <h3 class="c-article-preview-title">{{ post.title }}</h3>
               <p class="c-article-preview-excerpt">{{ post.description }}</p>
-            </div>
+            </a>
           </section>
 
           <section class="c-grid-row-3">
-            <article v-for="post in featuredPosts.slice(3, 6)" :key="post.id" class="c-article-preview is-grid">
+            <a 
+              v-for="post in featuredPosts.slice(3, 6)" 
+              :key="post.id" 
+              :href="post.url" 
+              class="c-article-preview is-grid">
               <div class="c-article-preview-image-wrapper">
                 <img :src="post.image" :alt="post.title">
               </div>
               <h4 class="c-article-preview-title">{{ post.title }}</h4>
               <p class="c-article-preview-excerpt">{{ post.description }}</p>
-            </article>
+            </a>
           </section>
 
           <section v-if="featuredPosts[6]" class="c-row-text-only">
-            <span class="c-article-preview-tag">{{ featuredPosts[6].category }}</span>
-            <h2 class="c-row-text-only-title">{{ featuredPosts[6].title }}</h2>
-            <p class="c-article-preview-excerpt">{{ featuredPosts[6].description }}</p>
+            <a :href="featuredPosts[6].url" class="c-row-link-wrapper">
+              <span class="c-article-preview-tag">{{ featuredPosts[6].category }}</span>
+              <h2 class="c-row-text-only-title">{{ featuredPosts[6].title }}</h2>
+              <p class="c-article-preview-excerpt">{{ featuredPosts[6].description }}</p>
+            </a>
           </section>
 
           <section class="c-grid-row-2">
-            <article v-for="post in featuredPosts.slice(7, 9)" :key="post.id" class="c-article-preview is-grid">
-              <div class="c-article-preview-image-wrapper">
-                <img :src="post.image" :alt="post.title">
-              </div>
-              <h4 class="c-article-preview-title">{{ post.title }}</h4>
-              <p class="c-article-preview-excerpt">{{ post.description }}</p>
-            </article>
+            <a 
+              v-for="post in featuredPosts.slice(7, 9)"
+              :key="post.id" 
+              :href="post.url" 
+              class="c-article-preview is-grid"> 
+                <div class="c-article-preview-image-wrapper">
+                  <img :src="post.image" :alt="post.title">
+                </div>
+                <h4 class="c-article-preview-title">{{ post.title }}</h4>
+                <p class="c-article-preview-excerpt">{{ post.description }}</p>
+            </a>
           </section>
               </div>
 

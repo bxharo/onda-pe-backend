@@ -20,7 +20,7 @@
     }
 
   }
-
+  
   .c-hero-text {
     min-width: 0;
     display: flex;
@@ -91,4 +91,23 @@
       }
     }
   }
+
+  .c-hero-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+
+    &:hover {
+      h1 {
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+      }
+     
+      img {
+        filter: brightness(0.9); // Efecto sutil al pasar el mouse
+        transition: filter 0.3s ease;
+      }
+    }
+  }
+
 }

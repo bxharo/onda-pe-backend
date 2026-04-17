@@ -6,22 +6,25 @@ defineProps<{
   tag: string
   description: string
   image: string
+  url: string;
 }>()
 </script>
 
 <template>
   <section class="c-hero">
-    <div class="c-hero-content">
-      <div class="c-hero-text">
-        <span class="c-hero-tag">{{ tag }}</span>
-        <h1 class="c-hero-title">{{ title }}</h1>
-        <p class="c-hero-description">{{ description }}</p>
-      </div>
+    <a :href="url" class="c-hero__link">
+      <div class="c-hero-content">
+        <div class="c-hero-text">
+          <span class="c-hero-tag">{{ tag }}</span>
+          <h1 class="c-hero-title">{{ title }}</h1>
+          <p class="c-hero-description">{{ description }}</p>
+        </div>
 
-      <div class="c-hero-image-wrapper">
-        <ArticlePreviewImage :source="image" class="c-hero-img-component"/>
+        <div class="c-hero-image-wrapper">
+          <ArticlePreviewImage :source="image" class="c-hero-img-component"/>
+        </div>
       </div>
-    </div>
+    </a>
   </section>
 </template>
 
