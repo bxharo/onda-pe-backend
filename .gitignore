@@ -36,6 +36,7 @@ wp-content/themes/onda-pe-theme/app/static/public/temp/
 .env.staging
 *.log
 composer.phar
+*.Identifier
 
 # --- Editor / OS ---
 .vscode/
