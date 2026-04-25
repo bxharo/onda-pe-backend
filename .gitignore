@@ -42,3 +42,10 @@ composer.phar
 .vscode/
 .idea/
 .DS_Store
+
+# --- Dependencias de Node ---
+node_modules/
+**/node_modules/
+dist/
+.env
+.env.local
