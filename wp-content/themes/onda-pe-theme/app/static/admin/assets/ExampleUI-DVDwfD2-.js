@@ -1,0 +1,1 @@
+import{c as r,o as s}from"./example-BBqtW4xM.js";const a=(e,o)=>{const c=e.__vccOpts||e;for(const[t,n]of o)c[t]=n;return c},_={},l={class:"p-4 br-small color-white background-primary-main"};function p(e,o){return s(),r("p",l,"This is an example component")}const i=a(_,[["render",p]]);export{i as default};

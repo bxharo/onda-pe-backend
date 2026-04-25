@@ -1,0 +1,23 @@
+{
+  "src/components/ui/ExampleUI.vue": {
+    "file": "assets/ExampleUI-DVDwfD2-.js",
+    "name": "ExampleUI",
+    "src": "src/components/ui/ExampleUI.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/core/example.ts"
+    ]
+  },
+  "src/core/example.ts": {
+    "file": "assets/example-BBqtW4xM.js",
+    "name": "example",
+    "src": "src/core/example.ts",
+    "isEntry": true,
+    "dynamicImports": [
+      "src/components/ui/ExampleUI.vue"
+    ],
+    "css": [
+      "assets/example-CVJWkE3S.css"
+    ]
+  }
+}

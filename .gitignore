@@ -1,34 +1,43 @@
-vendor/
-resources/node_modules
-resources/vue-legacy
-resources/vue/node_modules
-resources/admin/node_modules
+# --- WordPress Core (No trackear el motor de WP) ---
+wp-admin/
+wp-includes/
+index.php
+license.txt
+readme.html
+wp-activate.php
+wp-blog-header.php
+wp-comments-post.php
+wp-config-sample.php
+wp-cron.php
+wp-links-opml.php
+wp-load.php
+wp-login.php
+wp-mail.php
+wp-settings.php
+wp-signup.php
+wp-trackback.php
+xmlrpc.php
 
-# Log files
-resources/vue/npm-debug.log*
-resources/vue/yarn-debug.log*
-resources/vue/yarn-error.log*
-resources/vue/pnpm-debug.log*
-resources/vue/.stylelintcache
-resources/admin/npm-debug.log*
-resources/admin/yarn-debug.log*
-resources/admin/yarn-error.log*
-resources/admin/pnpm-debug.log*
+# --- WordPress Content ---
+wp-content/plugins/
+wp-content/upgrade/
+wp-content/uploads/
+wp-content/themes/twentytwenty*
 
-# local env files
+# --- Tu Tema (Ajuste de rutas de lo que ya tenías) ---
+wp-content/themes/onda-pe-theme/vendor/
+wp-content/themes/onda-pe-theme/resources/node_modules/
+wp-content/themes/onda-pe-theme/app/static/admin/temp/
+wp-content/themes/onda-pe-theme/app/static/public/temp/
+
+# --- Archivos de Entorno y Logs ---
 .env
 .env.php
 .env.staging
-
-# Editor directories and files
-resources/vue/.idea
-resources/vue/*.suo
-resources/vue/*.ntvs*
-resources/vue/*.njsproj
-resources/vue/*.sln
-resources/vue/*.sw?
-
-# etc
-app/static/admin/temp
-app/static/public/temp
+*.log
 composer.phar
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
