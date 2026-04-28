@@ -1,30 +1,24 @@
 # --- WordPress Core (No trackear el motor de WP) ---
-wp-admin/
-wp-includes/
-index.php
-license.txt
-readme.html
-wp-activate.php
-wp-blog-header.php
-wp-comments-post.php
-wp-config-sample.php
-wp-cron.php
-wp-links-opml.php
-wp-load.php
-wp-login.php
-wp-mail.php
-wp-settings.php
-wp-signup.php
-wp-trackback.php
-xmlrpc.php
+/wp-admin/
+/wp-includes/
+/*.php
+!/index.php
+/license.txt
+/readme.html
+
+# --- Languages ---
+wp-content/languages/
 
 # --- WordPress Content ---
-wp-content/plugins/
+# Ignorar todos los plugins
+wp-content/plugins/*
+!wp-content/plugins/onda-api.php
 wp-content/upgrade/
 wp-content/uploads/
 wp-content/themes/twentytwenty*
 
 # --- Tu Tema (Ajuste de rutas de lo que ya tenías) ---
+
 wp-content/themes/onda-pe-theme/vendor/
 wp-content/themes/onda-pe-theme/resources/node_modules/
 wp-content/themes/onda-pe-theme/app/static/admin/temp/
@@ -44,8 +38,15 @@ composer.phar
 .DS_Store
 
 # --- Dependencias de Node ---
+/vendor/
 node_modules/
 **/node_modules/
 dist/
 .env
 .env.local
+
+# --- Raíz del proyecto ---
+/composer.lock
+/package-lock.json
+/package.json
+/info.php
