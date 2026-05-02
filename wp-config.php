@@ -99,8 +99,13 @@ $table_prefix = 'wp_';
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
 if ( ! defined( 'WP_DEBUG' ) ) {
-	define( 'WP_DEBUG', false );
+	define( 'WP_DEBUG', true );
 }
+// Indica a WP que guarde los errores en un archivo llamado debug.log
+define( 'WP_DEBUG_LOG', true );
+
+// Evita que los errores salgan impresos en la pantalla de la web (opcional)
+define( 'WP_DEBUG_DISPLAY', false );
 
 /** Limitar revisiones a 3 por post */
 define( 'WP_POST_REVISIONS', 3 );

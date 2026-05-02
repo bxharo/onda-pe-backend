@@ -18,7 +18,6 @@ wp-content/uploads/
 wp-content/themes/twentytwenty*
 
 # --- Tu Tema (Ajuste de rutas de lo que ya tenías) ---
-
 wp-content/themes/onda-pe-theme/vendor/
 wp-content/themes/onda-pe-theme/resources/node_modules/
 wp-content/themes/onda-pe-theme/app/static/admin/temp/

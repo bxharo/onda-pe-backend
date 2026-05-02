@@ -10,8 +10,6 @@ if ( file_exists( $composer_autoload ) ) {
     require_once $composer_autoload;
 }
 
-
-
 add_action('rest_api_init', function () {
     register_rest_route('custom/v1', '/pages(?:/(?P<slug>[a-zA-Z0-9-]+))?', [
         'methods'  => 'GET',
@@ -27,7 +25,7 @@ add_action('rest_api_init', function () {
 
 function handle_onda_page_request($request) {
     $param_slug = $request->get_param('slug');
-    $url_slug   = $request['slug']; // Atributos de ruta tipo /pages/{slug}
+    $url_slug   = $request['slug'];
 
     // Prioridad: 1. Parámetro ?slug= 2. Atributo de ruta 3. Default 'home'
     $slug = $param_slug ?: ($url_slug ?: 'home');
@@ -43,15 +41,29 @@ function handle_onda_page_request($request) {
             break;
 
         case 'term':
-            $taxonomy = $typeName ?: 'category';
             $pageData = get_onda_term_data($typeName ?: 'category', $slug);
             break;
 
         case 'page':
         case 'post-type':
-            // Si el slug llega como 'general', lo forzamos a 'home' para evitar bucles
-            $finalSlug = ($slug === 'general') ? 'home' : $slug;
-            $pageData = get_onda_post_data($type, $typeName ?: 'page', $finalSlug);
+            // 1. CASO ESPECIAL: PORTADA
+            // Si el slug es home o vacío, llamamos al especialista de Home
+            if ($slug === 'home' || $slug === 'general' || empty($slug)) {
+                $pageData = get_onda_home_data();
+            } 
+            else {
+                // 2. CASO: ARTÍCULOS O PÁGINAS INDIVIDUALES
+                // Primero obtenemos el objeto de Timber
+                $post_obj = \Timber\Timber::get_post([
+                    'post_type' => $typeName ?: 'any', 
+                    'name'      => $slug
+                ]);
+
+                if ($post_obj) {
+                    // Llamamos al especialista de Single Post pasando el objeto
+                    $pageData = get_onda_single_post_data($post_obj);
+                }
+            }
             break;
     }
 
@@ -137,28 +149,14 @@ function get_onda_term_data($taxonomy, $slug) {
     ];
 }
 
-// 3. DATA DE POSTS Y HOME
-function get_onda_post_data($type, $typeName, $slug) {
-    // 1. Obtener el post base (la página en sí)
-    $post = \Timber\Timber::get_post(['post_type' => $typeName, 'name' => $slug]);
-    if (!$post) return null;
-
+// 3. ESPECIALISTA EN PORTADA
+function get_onda_home_data() {
+    
     $data = [
-        'post' => [
-            'id'             => $post->ID,
-            'title'          => $post->title(),
-            'excerpt'        => wp_strip_all_tags($post->post_excerpt),
-            'content'        => $post->content(),
-            'featured_image' => $post->thumbnail() ? $post->thumbnail()->src() : null,
-            'author_name'    => $post->author() ? $post->author()->name() : 'Redacción Onda',
-            'date'           => $post->date('c'), // Formato ISO 8601 (perfecto para JS)
-            'category_name'  => (count($post->terms())) ? $post->terms()[0]->name : 'General'
-        ]
+        'is_home' => true,
+        'post'    => ['title' => 'Portada'] // Data mínima
     ];
 
-    // 2. Lógica específica de la HOME
-    if ($type === 'page' && ($slug === 'home' || empty($slug))) {
-        
         // --- HERO ---
         $heroPost = \Timber\Timber::get_post([
             'post_type'      => 'post',
@@ -237,7 +235,69 @@ function get_onda_post_data($type, $typeName, $slug) {
         }
         
         $data['category_sections'] = $sectionsData;
-    }
+    
+    
+    return $data;
+}
+
+// 4. ESPECIALISTA EN CONTENIDO INDIVIDUAL
+function get_onda_single_post_data($post_obj) {
+    if (!$post_obj) return null;
+    
+    // 1. Estructura de la data principal
+    $data = [
+        'post' => [
+            'id'             => $post_obj->ID,
+            'title'          => $post_obj->title(),
+            'excerpt'        => wp_strip_all_tags($post_obj->post_excerpt),
+            'content'        => $post_obj->content(),
+            'featured_image' => $post_obj->thumbnail() ? $post_obj->thumbnail()->src() : null,
+            'author_name'    => $post_obj->author() ? $post_obj->author()->name() : 'Redacción Onda',
+            'date'           => $post_obj->date('c'), // Formato ISO 8601 (perfecto para JS)
+            'category_name'  => (count($post_obj->terms())) ? $post_obj->terms()[0]->name : 'General'
+        ],
+        'related' => []
+    ];
+
+    // Lógica de RELACIONADOS (solo si es un post individual y no la home)
+        $tag_ids = wp_get_post_tags($post_obj->ID, ['fields' => 'ids']);
+        
+        $related_query = [
+            'post_type'      => 'post',
+            'posts_per_page' => 3,
+            'post__not_in'   => [$post_obj->ID], // Excluir el actual
+            'orderby'        => 'date',
+            'order'          => 'DESC'
+        ];
+        
+        // Prioridad: Tags > Categoría
+        if (!empty($tag_ids)) {
+            $related_query['tag__in'] = $tag_ids;
+        } else {
+            // Si no hay tags, usamos la categoría del post actual
+            $terms = $post_obj->terms();
+            if (!empty($terms)) {
+                $related_query['category__in'] = [$terms[0]->ID];
+            }
+        }
+
+        $related_posts = \Timber\Timber::get_posts($related_query);
+
+        if($related_posts){
+            $data['related'] = array_map(function($p) {
+                return [
+                    'id'      => $p->ID,
+                    'title'   => $p->title(),
+                    'excerpt' => wp_strip_all_tags($p->post_excerpt),
+                    'image'   => $p->thumbnail() ? $p->thumbnail()->src() : null,
+                    'category_name' => (count($p->terms())) ? $p->terms()[0]->name : 'General',
+                    'url'     => $p->path(),
+                    'date'    => $p->date('d M, Y')
+                ];
+            }, $related_posts->to_array());
+        }
+    
 
     return $data;
+
 }
