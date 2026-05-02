@@ -14,11 +14,22 @@
  * * Localized language
  * * ABSPATH
  *
+ * 
  * @link https://wordpress.org/support/article/editing-wp-config-php/
  *
  * @package WordPress
  */
 
+
+//PHP SERVER PARA DESARROLLO
+if ( $_SERVER['HTTP_HOST'] === 'localhost:8000' ) {
+    // Entorno de Desarrollo Local
+    define( 'WP_HOME', 'http://localhost:8000' );
+    define( 'WP_SITEURL', 'http://localhost:8000' );
+} else {
+    // Entorno de Producción (Onda.pe)
+    // WordPress usará las URLs que configuraste en la base de datos
+}
 // ** Database settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 define( 'DB_NAME', 'ondadb' );
@@ -107,3 +118,4 @@ require_once ABSPATH . 'wp-settings.php';
 
 //Mientras estamos en entorno de desarrollo
 define('FS_METHOD', 'direct');
+

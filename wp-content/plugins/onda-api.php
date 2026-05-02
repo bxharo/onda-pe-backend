@@ -147,8 +147,12 @@ function get_onda_post_data($type, $typeName, $slug) {
         'post' => [
             'id'             => $post->ID,
             'title'          => $post->title(),
+            'excerpt'        => wp_strip_all_tags($post->post_excerpt),
             'content'        => $post->content(),
             'featured_image' => $post->thumbnail() ? $post->thumbnail()->src() : null,
+            'author_name'    => $post->author() ? $post->author()->name() : 'Redacción Onda',
+            'date'           => $post->date('c'), // Formato ISO 8601 (perfecto para JS)
+            'category_name'  => (count($post->terms())) ? $post->terms()[0]->name : 'General'
         ]
     ];
 
