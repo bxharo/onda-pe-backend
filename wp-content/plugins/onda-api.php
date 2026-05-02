@@ -250,22 +250,22 @@ function get_onda_single_post_data($post_obj) {
             'id'             => $post_obj->ID,
             'title'          => $post_obj->title(),
             'excerpt'        => wp_strip_all_tags($post_obj->post_excerpt),
-            'content'        => $post->content(),
-            'featured_image' => $post->thumbnail() ? $post->thumbnail()->src() : null,
-            'author_name'    => $post->author() ? $post->author()->name() : 'Redacción Onda',
-            'date'           => $post->date('c'), // Formato ISO 8601 (perfecto para JS)
-            'category_name'  => (count($post->terms())) ? $post->terms()[0]->name : 'General'
+            'content'        => $post_obj->content(),
+            'featured_image' => $post_obj->thumbnail() ? $post_obj->thumbnail()->src() : null,
+            'author_name'    => $post_obj->author() ? $post_obj->author()->name() : 'Redacción Onda',
+            'date'           => $post_obj->date('c'), // Formato ISO 8601 (perfecto para JS)
+            'category_name'  => (count($post_obj->terms())) ? $post_obj->terms()[0]->name : 'General'
         ],
         'related' => []
     ];
 
     // Lógica de RELACIONADOS (solo si es un post individual y no la home)
-        $tag_ids = wp_get_post_tags($post->ID, ['fields' => 'ids']);
+        $tag_ids = wp_get_post_tags($post_obj->ID, ['fields' => 'ids']);
         
         $related_query = [
             'post_type'      => 'post',
             'posts_per_page' => 3,
-            'post__not_in'   => [$post->ID], // Excluir el actual
+            'post__not_in'   => [$post_obj->ID], // Excluir el actual
             'orderby'        => 'date',
             'order'          => 'DESC'
         ];
@@ -296,7 +296,7 @@ function get_onda_single_post_data($post_obj) {
                 ];
             }, $related_posts->to_array());
         }
-    }
+    
 
     return $data;
 
