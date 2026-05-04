@@ -21,6 +21,12 @@ add_action('rest_api_init', function () {
             ],
         ],
     ]);
+
+    // RUTA PARA EL SIDEBAR
+    register_rest_route('custom/v1', '/sidebar', [
+        'methods'  => 'GET',
+        'callback' => 'get_onda_sidebar_data',
+    ]);
 });
 
 function handle_onda_page_request($request) {
@@ -100,10 +106,99 @@ function get_onda_general_data() {
         'footer_menu'  => $formatMenu($footerMenu)
     ];
 }
+// 2. ESPECIALISTA EN PORTADA
+function get_onda_home_data() {
+    
+    $data = [
+        'is_home' => true,
+        'post'    => ['title' => 'Portada'] // Data mínima
+    ];
 
-// 2. DATA DE CATEGORÍAS (LISTADOS)
+        // --- HERO ---
+        $heroPost = \Timber\Timber::get_post([
+            'post_type'      => 'post',
+            'meta_query'     => [['key' => 'es_hero', 'value' => '1']],
+            'posts_per_page' => 1
+        ]);
+
+        if ($heroPost) {
+            $data['hero'] = [
+                'id'            => $heroPost->ID,
+                'title_home'    => $heroPost->title(),
+                'post_excerpt'  => wp_strip_all_tags($heroPost->post_excerpt), // Usamos excerpt() para asegurar contenido
+                'hero_image'    => $heroPost->thumbnail() ? $heroPost->thumbnail()->src() : null,
+                'category_name' => (count($heroPost->terms())) ? $heroPost->terms()[0]->name : 'Actualidad',
+                'url'           => $heroPost->path()
+            ];
+        }
+
+        // --- DESTACADAS ---
+        $destacadasPosts = \Timber\Timber::get_posts([
+            'post_type'      => 'post',
+            'posts_per_page' => 9,
+            'meta_query'     => [['key' => 'es_destacada', 'value' => '1']],
+            'category__not_in' => [34], // Se excluye columnas de Opinión
+            'orderby'        => 'menu_order',
+            'order'          => 'ASC'
+        ]);
+
+        $destacadasArray = $destacadasPosts->to_array();
+        $data['destacadas'] = array_map(function($p) {
+            return [
+                'id'         => $p->ID,
+                'title_home' => $p->title(),
+                'excerpt'    => wp_strip_all_tags($p->post_excerpt), // Cambiado para que coincida con el nombre en Nuxt
+                'image'      => $p->thumbnail() ? $p->thumbnail()->src() : null,
+                'url'        => $p->path(),
+                'category_name' => (count($p->terms())) ? $p->terms()[0]->name : 'Destacado'
+            ];
+        }, $destacadasArray);
+
+        // --- SECCIONES DE CATEGORÍAS ---
+        // Se excluye lo que ya salió en Hero y Destacadas
+        $exclude_ids = $heroPost ? [$heroPost->ID] : [];
+        foreach ($destacadasArray as $p) { $exclude_ids[] = $p->ID; }
+
+        $categories = \Timber\Timber::get_terms([
+            'taxonomy'   => 'category',
+            'hide_empty' => true,
+            'parent'     => 0,
+            'exclude'    => [1, 34], // Excluir 'Sin categoría' y Opinión
+        ]);
+
+        $sectionsData = [];
+        foreach ($categories as $cat) {
+            $cat_posts = \Timber\Timber::get_posts([
+                'post_type'      => 'post',
+                'category_name'  => $cat->slug,
+                'posts_per_page' => 4,
+                'post__not_in'   => $exclude_ids,
+            ]);
+        
+            if (!empty($cat_posts)) {
+                $sectionsData[] = [
+                    'category_name' => $cat->name,
+                    'category_slug' => $cat->slug,
+                    'articles'      => array_map(function($p) use ($cat) {
+                        return [
+                            'id'      => $p->ID,
+                            'title'   => $p->title(),
+                            'excerpt' => wp_strip_all_tags($p->post_excerpt),
+                            'image'   => $p->thumbnail() ? $p->thumbnail()->src() : null,
+                            'url'     => $p->path()
+                        ];
+                    }, $cat_posts->to_array())
+                ];
+            }
+        }
+        
+        $data['category_sections'] = $sectionsData;
+                   
+    return $data;
+}
+// 3. DATA DE CATEGORÍAS (LISTADOS)
 function get_onda_term_data($taxonomy, $slug) {
-// 1. Buscamos el término de forma segura
+    // 1. Buscamos el término de forma segura
     $term_obj = get_term_by('slug', $slug, $taxonomy);
 
     if (!$term_obj) {
@@ -148,99 +243,7 @@ function get_onda_term_data($taxonomy, $slug) {
         }, $posts->to_array())
     ];
 }
-
-// 3. ESPECIALISTA EN PORTADA
-function get_onda_home_data() {
-    
-    $data = [
-        'is_home' => true,
-        'post'    => ['title' => 'Portada'] // Data mínima
-    ];
-
-        // --- HERO ---
-        $heroPost = \Timber\Timber::get_post([
-            'post_type'      => 'post',
-            'meta_query'     => [['key' => 'es_hero', 'value' => '1']],
-            'posts_per_page' => 1
-        ]);
-
-        if ($heroPost) {
-            $data['hero'] = [
-                'id'            => $heroPost->ID,
-                'title_home'    => $heroPost->title(),
-                'post_excerpt'  => wp_strip_all_tags($heroPost->post_excerpt), // Usamos excerpt() para asegurar contenido
-                'hero_image'    => $heroPost->thumbnail() ? $heroPost->thumbnail()->src() : null,
-                'category_name' => (count($heroPost->terms())) ? $heroPost->terms()[0]->name : 'Actualidad',
-                'url'           => $heroPost->path()
-            ];
-        }
-
-        // --- DESTACADAS ---
-        $destacadasPosts = \Timber\Timber::get_posts([
-            'post_type'      => 'post',
-            'posts_per_page' => 9,
-            'meta_query'     => [['key' => 'es_destacada', 'value' => '1']],
-            'orderby'        => 'menu_order',
-            'order'          => 'ASC'
-        ]);
-
-        $destacadasArray = $destacadasPosts->to_array();
-        $data['destacadas'] = array_map(function($p) {
-            return [
-                'id'         => $p->ID,
-                'title_home' => $p->title(),
-                'excerpt'    => wp_strip_all_tags($p->post_excerpt), // Cambiado para que coincida con el nombre en Nuxt
-                'image'      => $p->thumbnail() ? $p->thumbnail()->src() : null,
-                'url'        => $p->path(),
-                'category_name' => (count($p->terms())) ? $p->terms()[0]->name : 'Destacado'
-            ];
-        }, $destacadasArray);
-
-        // --- SECCIONES DE CATEGORÍAS (DINÁMICO) ---
-        // Preparamos IDs para excluir lo que ya salió en Hero y Destacadas
-        $exclude_ids = $heroPost ? [$heroPost->ID] : [];
-        foreach ($destacadasArray as $p) { $exclude_ids[] = $p->ID; }
-
-        $categories = \Timber\Timber::get_terms([
-            'taxonomy'   => 'category',
-            'hide_empty' => true,
-            'parent'     => 0,
-            'exclude'    => [1], // Excluir 'Sin categoría'
-        ]);
-
-        $sectionsData = [];
-        foreach ($categories as $cat) {
-            $cat_posts = \Timber\Timber::get_posts([
-                'post_type'      => 'post',
-                'category_name'  => $cat->slug,
-                'posts_per_page' => 4,
-                'post__not_in'   => $exclude_ids,
-            ]);
-        
-            if (!empty($cat_posts)) {
-                $sectionsData[] = [
-                    'category_name' => $cat->name,
-                    'category_slug' => $cat->slug,
-                    'articles'      => array_map(function($p) use ($cat) {
-                        return [
-                            'id'      => $p->ID,
-                            'title'   => $p->title(),
-                            'excerpt' => wp_strip_all_tags($p->post_excerpt),
-                            'image'   => $p->thumbnail() ? $p->thumbnail()->src() : null,
-                            'url'     => $p->path()
-                        ];
-                    }, $cat_posts->to_array())
-                ];
-            }
-        }
-        
-        $data['category_sections'] = $sectionsData;
-    
-    
-    return $data;
-}
-
-// 4. ESPECIALISTA EN CONTENIDO INDIVIDUAL
+// 4. ESPECIALISTA - ARTICULO
 function get_onda_single_post_data($post_obj) {
     if (!$post_obj) return null;
     
@@ -300,4 +303,51 @@ function get_onda_single_post_data($post_obj) {
 
     return $data;
 
+}
+// 5. ESPECIALISTA EN SIDEBAR
+function get_onda_sidebar_data() {
+    // 1. LO ULTIMO
+    $loUltimoPosts = \Timber\Timber::get_posts([
+        'post_type'      => 'post',
+        'posts_per_page' => 5,
+        'orderby'        => 'date',
+        'order'          => 'DESC'
+    ]);
+    
+    $lo_ultimo = array_map(function($p) {
+        return [
+            'id'    => $p->ID,
+            'title' => $p->title(),
+            'url'   => $p->path(),
+            'date'  => sprintf('%s atrás', human_time_diff(get_the_time('U', $p), current_time('timestamp')))
+        ];
+    }, $loUltimoPosts->to_array());
+
+    // 2. OPINION
+    $opinionPosts = \Timber\Timber::get_posts([
+        'post_type'      => 'post',
+        'posts_per_page' => 3,
+        'tax_query'      => [
+            [
+                'taxonomy' => 'category',
+                'field'    => 'slug',
+                'terms'    => 'opinion', // Asegúrate que este sea el slug real
+            ]
+        ]
+    ]);
+
+    $opinion = array_map(function($p) {
+        return [
+            'id'          => $p->ID,
+            'title'       => $p->title(),
+            'url'         => $p->path(),
+            'author_name' => $p->author() ? $p->author()->name() : 'Columnista',
+            'author_img'  => get_avatar_url($p->post_author, ['size' => 96]) 
+        ];
+    }, $opinionPosts->to_array());
+
+    return [
+        'lo_ultimo' => $lo_ultimo,
+        'opinion'   => $opinion
+    ];
 }
