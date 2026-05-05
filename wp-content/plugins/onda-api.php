@@ -145,11 +145,14 @@ function get_onda_home_data() {
         }
 
         // --- DESTACADAS ---
+        $opinion_term = get_term_by('slug', 'opinion', 'category');
+        $opinion_id = $opinion_term ? $opinion_term->term_id : 0;
+
         $destacadasPosts = \Timber\Timber::get_posts([
             'post_type'      => 'post',
             'posts_per_page' => 9,
             'meta_query'     => [['key' => 'es_destacada', 'value' => '1']],
-            'category__not_in' => [34], // Se excluye columnas de Opinión
+            'category__not_in' =>[$opinion_id], // Se excluye columnas de Opinión
             'orderby'        => 'menu_order',
             'order'          => 'ASC'
         ]);
@@ -168,14 +171,16 @@ function get_onda_home_data() {
 
         // --- SECCIONES DE CATEGORÍAS ---
         // Se excluye lo que ya salió en Hero y Destacadas
-        $exclude_ids = $heroPost ? [$heroPost->ID] : [];
-        foreach ($destacadasArray as $p) { $exclude_ids[] = $p->ID; }
+        $exclude_categories = [];
+        $uncategorized = get_term_by('slug', 'sin-categoria', 'category');
+        if ($uncategorized) $exclude_categories[] = $uncategorized->term_id;
+        if ($opinion_term) $exclude_categories[] = $opinion_term->term_id;
 
         $categories = \Timber\Timber::get_terms([
             'taxonomy'   => 'category',
             'hide_empty' => true,
             'parent'     => 0,
-            'exclude'    => [1, 34], // Excluir 'Sin categoría' y Opinión
+            'exclude'    => $exclude_categories, // Excluir 'Sin categoría' y Opinión
         ]);
 
         $sectionsData = [];
