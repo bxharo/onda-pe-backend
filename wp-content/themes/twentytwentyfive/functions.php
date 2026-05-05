@@ -180,3 +180,11 @@ if ( ! function_exists( 'twentytwentyfive_format_binding' ) ) :
 		}
 	}
 endif;
+
+function onda_setup_menus() {
+    register_nav_menus( array(
+        'main-menu'   => __( 'Menú Principal', 'onda' ),
+        'footer-menu' => __( 'Menú del Pie de Página', 'onda' ),
+    ) );
+}
+add_action( 'after_setup_theme', 'onda_setup_menus' );
