@@ -5,47 +5,38 @@
 !/index.php
 /license.txt
 /readme.html
-
-# --- Languages ---
-wp-content/languages/
+wp-config.php
 
 # --- WordPress Content ---
 # Ignorar todos los plugins
 wp-content/plugins/*
 !wp-content/plugins/onda-api.php
+wp-content/themes/*
+!wp-content/themes/twentytwentyfive/ # Solo si vas a modificarlo
+wp-content/languages/
 wp-content/upgrade/
 wp-content/uploads/
-wp-content/themes/twentytwenty*
-
-# --- Tu Tema (Ajuste de rutas de lo que ya tenías) ---
-wp-content/themes/onda-pe-theme/vendor/
-wp-content/themes/onda-pe-theme/resources/node_modules/
-wp-content/themes/onda-pe-theme/app/static/admin/temp/
-wp-content/themes/onda-pe-theme/app/static/public/temp/
 
 # --- Archivos de Entorno y Logs ---
-.env
-.env.php
-.env.staging
+.env*
 *.log
-composer.phar
 *.Identifier
+info.php
 
-# --- Editor / OS ---
-.vscode/
-.idea/
-.DS_Store
-
-# --- Dependencias de Node ---
-/vendor/
-node_modules/
+# --- Dependencias y Build ---
 **/node_modules/
+**/vendor/
+node_modules/
 dist/
-.env
-.env.local
+composer.phar
 
 # --- Raíz del proyecto ---
 /composer.lock
 /package-lock.json
 /package.json
 /info.php
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
