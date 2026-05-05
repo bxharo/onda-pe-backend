@@ -19,6 +19,18 @@ add_action('rest_api_init', function () {
                 'default' => '',
                 'sanitize_callback' => 'sanitize_text_field'
             ],
+            'type' => [
+                'default' => '',
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
+            'type-name' => [
+                'default' => '',
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
+            'typeName' => [
+                'default' => '',
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
         ],
     ]);
 
@@ -193,6 +205,9 @@ function get_onda_home_data() {
         }
         
         $data['category_sections'] = $sectionsData;
+
+        // Guardamos el resultado en caché por 15 minutos antes de retornar
+        set_transient($cache_key, $data, 10 * MINUTE_IN_SECONDS);
                    
     return $data;
 }
