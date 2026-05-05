@@ -10,8 +10,6 @@ if ( file_exists( $composer_autoload ) ) {
     require_once $composer_autoload;
 }
 
-
-
 add_action('rest_api_init', function () {
     register_rest_route('custom/v1', '/pages(?:/(?P<slug>[a-zA-Z0-9-]+))?', [
         'methods'  => 'GET',
@@ -21,13 +19,31 @@ add_action('rest_api_init', function () {
                 'default' => '',
                 'sanitize_callback' => 'sanitize_text_field'
             ],
+            'type' => [
+                'default' => '',
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
+            'type-name' => [
+                'default' => '',
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
+            'typeName' => [
+                'default' => '',
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
         ],
+    ]);
+
+    // RUTA PARA EL SIDEBAR
+    register_rest_route('custom/v1', '/sidebar', [
+        'methods'  => 'GET',
+        'callback' => 'get_onda_sidebar_data',
     ]);
 });
 
 function handle_onda_page_request($request) {
     $param_slug = $request->get_param('slug');
-    $url_slug   = $request['slug']; // Atributos de ruta tipo /pages/{slug}
+    $url_slug   = $request['slug'];
 
     // Prioridad: 1. Parámetro ?slug= 2. Atributo de ruta 3. Default 'home'
     $slug = $param_slug ?: ($url_slug ?: 'home');
@@ -43,15 +59,29 @@ function handle_onda_page_request($request) {
             break;
 
         case 'term':
-            $taxonomy = $typeName ?: 'category';
             $pageData = get_onda_term_data($typeName ?: 'category', $slug);
             break;
 
         case 'page':
         case 'post-type':
-            // Si el slug llega como 'general', lo forzamos a 'home' para evitar bucles
-            $finalSlug = ($slug === 'general') ? 'home' : $slug;
-            $pageData = get_onda_post_data($type, $typeName ?: 'page', $finalSlug);
+            // 1. CASO ESPECIAL: PORTADA
+            // Si el slug es home o vacío, llamamos al especialista de Home
+            if ($slug === 'home' || $slug === 'general' || empty($slug)) {
+                $pageData = get_onda_home_data();
+            } 
+            else {
+                // 2. CASO: ARTÍCULOS O PÁGINAS INDIVIDUALES
+                // Primero obtenemos el objeto de Timber
+                $post_obj = \Timber\Timber::get_post([
+                    'post_type' => $typeName ?: 'any', 
+                    'name'      => $slug
+                ]);
+
+                if ($post_obj) {
+                    // Llamamos al especialista de Single Post pasando el objeto
+                    $pageData = get_onda_single_post_data($post_obj);
+                }
+            }
             break;
     }
 
@@ -88,10 +118,107 @@ function get_onda_general_data() {
         'footer_menu'  => $formatMenu($footerMenu)
     ];
 }
+// 2. ESPECIALISTA EN PORTADA
+function get_onda_home_data() {
+    
+    $data = [
+        'is_home' => true,
+        'post'    => ['title' => 'Portada'] // Data mínima
+    ];
 
-// 2. DATA DE CATEGORÍAS (LISTADOS)
+        // --- HERO ---
+        $heroPost = \Timber\Timber::get_post([
+            'post_type'      => 'post',
+            'meta_query'     => [['key' => 'es_hero', 'value' => '1']],
+            'posts_per_page' => 1
+        ]);
+
+        if ($heroPost) {
+            $data['hero'] = [
+                'id'            => $heroPost->ID,
+                'title_home'    => $heroPost->title(),
+                'post_excerpt'  => wp_strip_all_tags($heroPost->post_excerpt), // Usamos excerpt() para asegurar contenido
+                'hero_image'    => $heroPost->thumbnail() ? $heroPost->thumbnail()->src() : null,
+                'category_name' => (count($heroPost->terms())) ? $heroPost->terms()[0]->name : 'Actualidad',
+                'url'           => $heroPost->path()
+            ];
+        }
+
+        // --- DESTACADAS ---
+        $opinion_term = get_term_by('slug', 'opinion', 'category');
+        $opinion_id = $opinion_term ? $opinion_term->term_id : 0;
+
+        $destacadasPosts = \Timber\Timber::get_posts([
+            'post_type'      => 'post',
+            'posts_per_page' => 9,
+            'meta_query'     => [['key' => 'es_destacada', 'value' => '1']],
+            'category__not_in' =>[$opinion_id], // Se excluye columnas de Opinión
+            'orderby'        => 'menu_order',
+            'order'          => 'ASC'
+        ]);
+
+        $destacadasArray = $destacadasPosts->to_array();
+        $data['destacadas'] = array_map(function($p) {
+            return [
+                'id'         => $p->ID,
+                'title_home' => $p->title(),
+                'excerpt'    => wp_strip_all_tags($p->post_excerpt), // Cambiado para que coincida con el nombre en Nuxt
+                'image'      => $p->thumbnail() ? $p->thumbnail()->src() : null,
+                'url'        => $p->path(),
+                'category_name' => (count($p->terms())) ? $p->terms()[0]->name : 'Destacado'
+            ];
+        }, $destacadasArray);
+
+        // --- SECCIONES DE CATEGORÍAS ---
+        // Se excluye lo que ya salió en Hero y Destacadas
+        $exclude_categories = [];
+        $uncategorized = get_term_by('slug', 'sin-categoria', 'category');
+        if ($uncategorized) $exclude_categories[] = $uncategorized->term_id;
+        if ($opinion_term) $exclude_categories[] = $opinion_term->term_id;
+
+        $categories = \Timber\Timber::get_terms([
+            'taxonomy'   => 'category',
+            'hide_empty' => true,
+            'parent'     => 0,
+            'exclude'    => $exclude_categories, // Excluir 'Sin categoría' y Opinión
+        ]);
+
+        $sectionsData = [];
+        foreach ($categories as $cat) {
+            $cat_posts = \Timber\Timber::get_posts([
+                'post_type'      => 'post',
+                'category_name'  => $cat->slug,
+                'posts_per_page' => 4,
+                'post__not_in'   => $exclude_ids,
+            ]);
+        
+            if (!empty($cat_posts)) {
+                $sectionsData[] = [
+                    'category_name' => $cat->name,
+                    'category_slug' => $cat->slug,
+                    'articles'      => array_map(function($p) use ($cat) {
+                        return [
+                            'id'      => $p->ID,
+                            'title'   => $p->title(),
+                            'excerpt' => wp_strip_all_tags($p->post_excerpt),
+                            'image'   => $p->thumbnail() ? $p->thumbnail()->src() : null,
+                            'url'     => $p->path()
+                        ];
+                    }, $cat_posts->to_array())
+                ];
+            }
+        }
+        
+        $data['category_sections'] = $sectionsData;
+
+        // Guardamos el resultado en caché por 15 minutos antes de retornar
+        set_transient($cache_key, $data, 10 * MINUTE_IN_SECONDS);
+                   
+    return $data;
+}
+// 3. DATA DE CATEGORÍAS (LISTADOS)
 function get_onda_term_data($taxonomy, $slug) {
-// 1. Buscamos el término de forma segura
+    // 1. Buscamos el término de forma segura
     $term_obj = get_term_by('slug', $slug, $taxonomy);
 
     if (!$term_obj) {
@@ -136,104 +263,111 @@ function get_onda_term_data($taxonomy, $slug) {
         }, $posts->to_array())
     ];
 }
-
-// 3. DATA DE POSTS Y HOME
-function get_onda_post_data($type, $typeName, $slug) {
-    // 1. Obtener el post base (la página en sí)
-    $post = \Timber\Timber::get_post(['post_type' => $typeName, 'name' => $slug]);
-    if (!$post) return null;
-
+// 4. ESPECIALISTA - ARTICULO
+function get_onda_single_post_data($post_obj) {
+    if (!$post_obj) return null;
+    
+    // 1. Estructura de la data principal
     $data = [
         'post' => [
-            'id'             => $post->ID,
-            'title'          => $post->title(),
-            'content'        => $post->content(),
-            'featured_image' => $post->thumbnail() ? $post->thumbnail()->src() : null,
-        ]
+            'id'             => $post_obj->ID,
+            'title'          => $post_obj->title(),
+            'excerpt'        => wp_strip_all_tags($post_obj->post_excerpt),
+            'content'        => $post_obj->content(),
+            'featured_image' => $post_obj->thumbnail() ? $post_obj->thumbnail()->src() : null,
+            'author_name'    => $post_obj->author() ? $post_obj->author()->name() : 'Redacción Onda',
+            'date'           => $post_obj->date('c'), // Formato ISO 8601 (perfecto para JS)
+            'category_name'  => (count($post_obj->terms())) ? $post_obj->terms()[0]->name : 'General'
+        ],
+        'related' => []
     ];
 
-    // 2. Lógica específica de la HOME
-    if ($type === 'page' && ($slug === 'home' || empty($slug))) {
+    // Lógica de RELACIONADOS (solo si es un post individual y no la home)
+        $tag_ids = wp_get_post_tags($post_obj->ID, ['fields' => 'ids']);
         
-        // --- HERO ---
-        $heroPost = \Timber\Timber::get_post([
+        $related_query = [
             'post_type'      => 'post',
-            'meta_query'     => [['key' => 'es_hero', 'value' => '1']],
-            'posts_per_page' => 1
-        ]);
-
-        if ($heroPost) {
-            $data['hero'] = [
-                'id'            => $heroPost->ID,
-                'title_home'    => $heroPost->title(),
-                'post_excerpt'  => wp_strip_all_tags($heroPost->post_excerpt), // Usamos excerpt() para asegurar contenido
-                'hero_image'    => $heroPost->thumbnail() ? $heroPost->thumbnail()->src() : null,
-                'category_name' => (count($heroPost->terms())) ? $heroPost->terms()[0]->name : 'Actualidad',
-                'url'           => $heroPost->path()
-            ];
-        }
-
-        // --- DESTACADAS ---
-        $destacadasPosts = \Timber\Timber::get_posts([
-            'post_type'      => 'post',
-            'posts_per_page' => 9,
-            'meta_query'     => [['key' => 'es_destacada', 'value' => '1']],
-            'orderby'        => 'menu_order',
-            'order'          => 'ASC'
-        ]);
-
-        $destacadasArray = $destacadasPosts->to_array();
-        $data['destacadas'] = array_map(function($p) {
-            return [
-                'id'         => $p->ID,
-                'title_home' => $p->title(),
-                'excerpt'    => wp_strip_all_tags($p->post_excerpt), // Cambiado para que coincida con el nombre en Nuxt
-                'image'      => $p->thumbnail() ? $p->thumbnail()->src() : null,
-                'url'        => $p->path(),
-                'category_name' => (count($p->terms())) ? $p->terms()[0]->name : 'Destacado'
-            ];
-        }, $destacadasArray);
-
-        // --- SECCIONES DE CATEGORÍAS (DINÁMICO) ---
-        // Preparamos IDs para excluir lo que ya salió en Hero y Destacadas
-        $exclude_ids = $heroPost ? [$heroPost->ID] : [];
-        foreach ($destacadasArray as $p) { $exclude_ids[] = $p->ID; }
-
-        $categories = \Timber\Timber::get_terms([
-            'taxonomy'   => 'category',
-            'hide_empty' => true,
-            'parent'     => 0,
-            'exclude'    => [1], // Excluir 'Sin categoría'
-        ]);
-
-        $sectionsData = [];
-        foreach ($categories as $cat) {
-            $cat_posts = \Timber\Timber::get_posts([
-                'post_type'      => 'post',
-                'category_name'  => $cat->slug,
-                'posts_per_page' => 4,
-                'post__not_in'   => $exclude_ids,
-            ]);
+            'posts_per_page' => 3,
+            'post__not_in'   => [$post_obj->ID], // Excluir el actual
+            'orderby'        => 'date',
+            'order'          => 'DESC'
+        ];
         
-            if (!empty($cat_posts)) {
-                $sectionsData[] = [
-                    'category_name' => $cat->name,
-                    'category_slug' => $cat->slug,
-                    'articles'      => array_map(function($p) use ($cat) {
-                        return [
-                            'id'      => $p->ID,
-                            'title'   => $p->title(),
-                            'excerpt' => wp_strip_all_tags($p->post_excerpt),
-                            'image'   => $p->thumbnail() ? $p->thumbnail()->src() : null,
-                            'url'     => $p->path()
-                        ];
-                    }, $cat_posts->to_array())
-                ];
+        // Prioridad: Tags > Categoría
+        if (!empty($tag_ids)) {
+            $related_query['tag__in'] = $tag_ids;
+        } else {
+            // Si no hay tags, usamos la categoría del post actual
+            $terms = $post_obj->terms();
+            if (!empty($terms)) {
+                $related_query['category__in'] = [$terms[0]->ID];
             }
         }
-        
-        $data['category_sections'] = $sectionsData;
-    }
+
+        $related_posts = \Timber\Timber::get_posts($related_query);
+
+        if($related_posts){
+            $data['related'] = array_map(function($p) {
+                return [
+                    'id'      => $p->ID,
+                    'title'   => $p->title(),
+                    'excerpt' => wp_strip_all_tags($p->post_excerpt),
+                    'image'   => $p->thumbnail() ? $p->thumbnail()->src() : null,
+                    'category_name' => (count($p->terms())) ? $p->terms()[0]->name : 'General',
+                    'url'     => $p->path(),
+                    'date'    => $p->date('d M, Y')
+                ];
+            }, $related_posts->to_array());
+        }
+    
 
     return $data;
+
+}
+// 5. ESPECIALISTA EN SIDEBAR
+function get_onda_sidebar_data() {
+    // 1. LO ULTIMO
+    $loUltimoPosts = \Timber\Timber::get_posts([
+        'post_type'      => 'post',
+        'posts_per_page' => 5,
+        'orderby'        => 'date',
+        'order'          => 'DESC'
+    ]);
+    
+    $lo_ultimo = array_map(function($p) {
+        return [
+            'id'    => $p->ID,
+            'title' => $p->title(),
+            'url'   => $p->path(),
+            'date'  => sprintf('%s atrás', human_time_diff(get_the_time('U', $p), current_time('timestamp')))
+        ];
+    }, $loUltimoPosts->to_array());
+
+    // 2. OPINION
+    $opinionPosts = \Timber\Timber::get_posts([
+        'post_type'      => 'post',
+        'posts_per_page' => 3,
+        'tax_query'      => [
+            [
+                'taxonomy' => 'category',
+                'field'    => 'slug',
+                'terms'    => 'opinion', // Asegúrate que este sea el slug real
+            ]
+        ]
+    ]);
+
+    $opinion = array_map(function($p) {
+        return [
+            'id'          => $p->ID,
+            'title'       => $p->title(),
+            'url'         => $p->path(),
+            'author_name' => $p->author() ? $p->author()->name() : 'Columnista',
+            'author_img'  => get_avatar_url($p->post_author, ['size' => 96]) 
+        ];
+    }, $opinionPosts->to_array());
+
+    return [
+        'lo_ultimo' => $lo_ultimo,
+        'opinion'   => $opinion
+    ];
 }
